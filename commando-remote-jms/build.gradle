@@ -1,0 +1,17 @@
+dependencies {
+    compile project(':commando-remote')
+    compile 'javax.jms:jms-api:1.1-rev-1'
+
+    provided 'org.apache.activemq:activemq-all:'+activemqVersion
+    
+    
+    testCompile project(':commando-xml')
+    testCompile project(':commando-testbase')
+    
+    testCompile group: 'org.springframework', name: 'spring-context', version: springVersion
+    testCompile group: 'org.springframework', name: 'spring-core', version: springVersion
+    testCompile group: 'org.springframework', name: 'spring-jms', version: springVersion
+    testCompile group: 'org.springframework', name: 'spring-test', version: springVersion
+    compile 'org.apache.activemq:activemq-spring:'+activemqVersion
+    compile 'org.apache.activemq:activemq-all:'+activemqVersion
+}

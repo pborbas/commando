@@ -1,0 +1,8 @@
+dependencies {
+	compile project(':commando-core')
+	compile project(':commando-xml')
+	compile project(':commando-remote')
+   	compile 'log4j:log4j:'+log4jVersion
+    compile 'junit:junit:'+junitVersion
+    compile 'org.mockito:mockito-all:'+mockitoVersion
+}

@@ -1,0 +1,66 @@
+task wrapper(type: Wrapper) {
+        gradleVersion = '2.0'
+        jarFile = '../wrapper/wrapper.jar'
+}
+
+subprojects {
+
+    apply plugin: 'java'
+    apply plugin: 'eclipse'
+    apply plugin: 'idea'
+    apply plugin: 'maven'
+
+//ECLIPSE
+eclipse {
+    classpath {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}
+
+    configurations {
+        provided
+        compile.extendsFrom provided
+    }
+
+    repositories {
+       mavenCentral()
+    }
+
+    dependencies {
+     	compile 'commons-logging:commons-logging:'+commonsLoggingVersion
+      	testCompile 'log4j:log4j:'+log4jVersion
+       	testCompile 'junit:junit:'+junitVersion
+       	testCompile 'org.mockito:mockito-all:'+mockitoVersion
+    }
+
+    group = 'org.commando'
+    version = '1.0-SNAPSHOT'
+
+//ARTIFACTS
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+    jar {
+        manifest.attributes provider: 'Peter Borbas'
+    }
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+    archives jar
+}
+
+task wrapper(type: Wrapper) {
+        gradleVersion = '2.3'
+        jarFile = '../wrapper/wrapper.jar'
+}
+
+}

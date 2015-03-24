@@ -1,0 +1,7 @@
+include "commando-core"
+include "commando-remote"
+include "commando-remote-http"
+include "commando-remote-jms"
+include "commando-spring"
+include "commando-xml"
+include "commando-testbase"

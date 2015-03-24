@@ -1,0 +1,40 @@
+subprojects {
+
+    apply plugin: 'java'
+    apply plugin: 'eclipse'
+
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+
+//ECLIPSE
+eclipse {
+    classpath {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}
+
+    configurations {
+        provided
+        compile.extendsFrom provided
+    }
+
+    repositories {
+       mavenLocal()
+       mavenCentral()
+    }
+
+    dependencies {
+     	compile 'commons-logging:commons-logging:1.2+'
+      	testCompile 'log4j:log4j:1.2.+'
+       	testCompile 'junit:junit:4.11'
+    }
+
+    group = 'org.commando.sample'
+    version = '1.0-SNAPSHOT'
+
+    jar {
+        manifest.attributes provider: 'Peter Borbas'
+    }
+
+}
