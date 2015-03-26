@@ -33,6 +33,9 @@ Switch to Observable from ResultFuture
 	-The ObserverResult implementation is extendable to support later reactive or nio execution
 
 TODO:
+
+Clean and separate -spring project dependencies. The spring import shouldn't import activemq dependency spring-core, spring-remote, etc. could solve it
+
 Service registry
 Load balancer dispatcher (uses an LB strategy to delegate to dispatcher instances)
 Cache support
