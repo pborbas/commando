@@ -10,6 +10,8 @@ subprojects {
     apply plugin: 'idea'
     apply plugin: 'maven'
 
+sourceCompatibility = 1.7
+
 //ECLIPSE
 eclipse {
     classpath {

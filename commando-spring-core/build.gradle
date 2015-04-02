@@ -1,0 +1,11 @@
+dependencies {
+    compile project(':commando-core')
+    compile project(':commando-xml')
+
+    compile group: 'org.springframework', name: 'spring-tx', version: springVersion
+    compile group: 'org.springframework', name: 'spring-context', version: springVersion
+    compile group: 'org.springframework', name: 'spring-core', version: springVersion
+    
+    testCompile  group: 'org.springframework', name: 'spring-test', version: springVersion
+
+}

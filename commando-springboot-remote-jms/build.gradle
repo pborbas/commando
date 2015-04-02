@@ -1,0 +1,6 @@
+dependencies {
+    compile project(':commando-spring-remote-jms')
+    provided 'org.springframework.boot:spring-boot:1.1.8.RELEASE'
+    testCompile  group: 'org.springframework', name: 'spring-test', version: springVersion
+
+}

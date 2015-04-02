@@ -1,0 +1,12 @@
+dependencies {
+    compile project(':commando-spring-remote')
+    compile project(':commando-remote-http')
+    compile project(':commando-xml')
+
+    compile group: 'org.springframework', name: 'spring-web', version: springVersion
+    
+    provided group: 'org.apache.tomcat', name: 'tomcat-servlet-api', version: tomcatServletApiVersion
+    
+    testCompile  group: 'org.springframework', name: 'spring-test', version: springVersion
+
+}
