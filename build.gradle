@@ -36,7 +36,7 @@ eclipse {
        	testCompile 'org.mockito:mockito-all:'+mockitoVersion
     }
 
-    group = 'org.commando'
+    group = 'io.github.pborbas.commando'
     version = '1.0.0-SNAPSHOT'
 
 //ARTIFACTS
@@ -65,4 +65,49 @@ task wrapper(type: Wrapper) {
         jarFile = '../wrapper/wrapper.jar'
 }
 
+}
+
+uploadArchives {
+  repositories {
+    mavenDeployer {
+ //     beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+      pom.project {
+        name 'Commando library'
+        packaging 'jar'
+        // optionally artifactId can be defined here 
+        description 'Command pattern library'
+        url 'http://pborbas.github.io/commando/'
+
+        scm {
+          connection 'https://github.com/pborbas/commando.git'
+          developerConnection 'https://github.com/pborbas/commando.git'
+          url 'https://github.com/pborbas/commando'
+        }
+
+        licenses {
+          license {
+            name 'The Apache License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          }
+        }
+
+        developers {
+          developer {
+            id 'pborbas'
+            name 'Peter Borbas'
+            email 'peetair@gmail.com'
+          }
+        }
+      }
+    }
+  }
 }
