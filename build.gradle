@@ -1,3 +1,5 @@
+//apply plugin: 'maven'
+
 task wrapper(type: Wrapper) {
         gradleVersion = '2.3'
         jarFile = '../wrapper/wrapper.jar'
@@ -65,7 +67,6 @@ task wrapper(type: Wrapper) {
         jarFile = '../wrapper/wrapper.jar'
 }
 
-}
 
 uploadArchives {
   repositories {
@@ -110,4 +111,8 @@ uploadArchives {
       }
     }
   }
+}
+
+
+
 }
