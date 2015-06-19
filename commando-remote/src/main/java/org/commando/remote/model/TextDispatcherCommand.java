@@ -1,9 +1,9 @@
 package org.commando.remote.model;
 
+import org.commando.command.DispatchCommand;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.commando.command.DispatchCommand;
 
 /**
  * Serialized version of a {@link DispatchCommand}
@@ -36,4 +36,19 @@ public class TextDispatcherCommand {
 	return this.headers;
     }
 
+	@Override
+	public String toString() {
+		return textCommand;
+	}
+
+	public String toString(boolean debug) {
+		String result=toString();
+		if (debug) {
+			result+="\nHeaders:";
+			for (String headerName:headers.keySet()) {
+				result+="\n "+headerName+"="+headers.get(headerName);
+			}
+		}
+		return result;
+	}
 }

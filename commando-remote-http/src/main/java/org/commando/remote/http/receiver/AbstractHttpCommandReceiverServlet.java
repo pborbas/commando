@@ -1,15 +1,5 @@
 package org.commando.remote.http.receiver;
 
-import java.io.IOException;
-import java.util.Enumeration;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,6 +7,15 @@ import org.commando.exception.DispatchException;
 import org.commando.remote.model.TextDispatcherCommand;
 import org.commando.remote.model.TextDispatcherResult;
 import org.commando.remote.receiver.CommandReceiver;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Enumeration;
 
 public abstract class AbstractHttpCommandReceiverServlet extends HttpServlet {
 
@@ -47,9 +46,9 @@ public abstract class AbstractHttpCommandReceiverServlet extends HttpServlet {
     }
 
     protected void process(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        LOGGER.debug("message received");
         try {
             TextDispatcherCommand textDispatcherCommand = this.parseRequest(req);
+			LOGGER.debug("Command received: " + textDispatcherCommand.toString(LOGGER.isDebugEnabled()));
             TextDispatcherResult textDispatcherResult = this.commandReceiver.execute(textDispatcherCommand);
             this.writeResponse(resp, textDispatcherResult);
         } catch (DispatchException e) {
@@ -63,8 +62,9 @@ public abstract class AbstractHttpCommandReceiverServlet extends HttpServlet {
             for (String headerName:textDispatcherResult.getHeaders().keySet()) {
                 ((HttpServletResponse)response).setHeader(headerName, textDispatcherResult.getHeader(headerName));
             }
+			LOGGER.debug("Response sent:"+textDispatcherResult.toString(LOGGER.isDebugEnabled()));
         } catch (IOException e) {
-            throw new DispatchException("Error while writing error to response:" + e, e);
+            throw new DispatchException("Error while writing result to response:" + e, e);
         }
     }
 

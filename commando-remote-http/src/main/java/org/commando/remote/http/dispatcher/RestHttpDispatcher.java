@@ -1,11 +1,5 @@
 package org.commando.remote.http.dispatcher;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
-
-import javax.ws.rs.Path;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
@@ -29,6 +23,11 @@ import org.commando.remote.model.TextDispatcherCommand;
 import org.commando.remote.model.TextDispatcherResult;
 import org.commando.remote.serializer.Serializer;
 import org.commando.result.Result;
+
+import javax.ws.rs.Path;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 
 /**
  * Remote HTTP implementation of the {@link Dispatcher}
@@ -54,7 +53,7 @@ public class RestHttpDispatcher extends AbstractRemoteDispatcher implements Remo
     protected TextDispatcherResult executeRemote(final Command<? extends Result> command, final TextDispatcherCommand textDispatcherCommand, final Long timeout) throws DispatchException {
         try {
             HttpRequestBase httpRequest = this.createRequest(command, textDispatcherCommand, timeout);
-            LOGGER.debug("Sending HTTP request to:" + httpRequest.getURI().toString() + " Method:" + httpRequest.getMethod());
+            LOGGER.debug("Sending HTTP request of command: "+command.getCommandId()+" to:" + httpRequest.getURI().toString() + " Method:" + httpRequest.getMethod());
             CloseableHttpResponse response = this.httpclient.execute(httpRequest);
             try {
                 return this.parseResponse(response, command);
@@ -62,7 +61,7 @@ public class RestHttpDispatcher extends AbstractRemoteDispatcher implements Remo
                 response.close();
             }
         } catch (Exception e) {
-            throw new RemoteDispatchException("Error while sending command through HTTP to URL:" + this.targetUrl + ". Error message:" + e, e);
+            throw new RemoteDispatchException("Error while sending command:"+command.getCommandId()+" through HTTP to URL:" + this.targetUrl + ". Error message:" + e, e);
         }
     }
 

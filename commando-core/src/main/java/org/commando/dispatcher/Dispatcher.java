@@ -13,11 +13,11 @@ import org.commando.result.ResultFuture;
 public interface Dispatcher {
     public static final long DEFAULT_TIMEOUT = 30000;
 
-    public static final String HEADER_TIMEOUT = "commandTimeout";
-    public static final String HEADER_COMMAND_ID = "commandId";
-    public static final String HEADER_COMMAND_CLASS = "commandClass";
-    public static final String HEADER_COMMAND_EXECUTION_TIME= "commandExecutionTime";
-    public static final String HEADER_RESULT_CLASS = "resultClass";
+    public static final String HEADER_TIMEOUT = "Command-Timeout";
+    public static final String HEADER_COMMAND_ID = "Command-Id";
+    public static final String HEADER_COMMAND_CLASS = "Command-Class";
+    public static final String HEADER_COMMAND_EXECUTION_TIME= "Command-Exec-Time";
+    public static final String HEADER_RESULT_CLASS = "Result-Class";
 
     /**
      * Finds the {@link Action} for the specified {@link Command} and executes

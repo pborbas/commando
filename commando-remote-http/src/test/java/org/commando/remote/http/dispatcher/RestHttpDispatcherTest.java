@@ -1,7 +1,5 @@
 package org.commando.remote.http.dispatcher;
 
-import java.util.concurrent.TimeUnit;
-
 import org.commando.command.Command;
 import org.commando.dispatcher.ChainableDispatcher;
 import org.commando.example.SampleCommand;
@@ -17,6 +15,8 @@ import org.eclipse.jetty.server.Server;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.util.concurrent.TimeUnit;
 
 public class RestHttpDispatcherTest extends AbstractDispatcherTest {
 
@@ -54,6 +54,7 @@ public class RestHttpDispatcherTest extends AbstractDispatcherTest {
     @BeforeClass
     public static void startServer() throws Exception {
         server = JettyUnitServlet.startServer(TestHttpReceiverServlet.class, 8123, "/*");
+		Thread.sleep(1000);
     }
 
     @AfterClass

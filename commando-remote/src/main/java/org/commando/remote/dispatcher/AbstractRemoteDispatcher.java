@@ -38,14 +38,14 @@ public abstract class AbstractRemoteDispatcher extends AbstractDispatcher implem
 
     @Override
     public DispatchResult<Result> execute(final DispatchCommand dispatchCommand) throws DispatchException {
-        LOGGER.debug("Executing remote command");
         TextDispatcherCommand textDispatcherCommand=this.serializeCommand(dispatchCommand);
+		LOGGER.debug("Executing remote command: "+textDispatcherCommand.toString(LOGGER.isDebugEnabled()));
         TextDispatcherResult textDispatcherResult=this.executeRemote(dispatchCommand.getCommand(), textDispatcherCommand, this.getTimeout());
         return this.parseResult(dispatchCommand.getCommand(), textDispatcherResult);
     }
 
     protected DispatchResult<Result> parseResult(final Command<? extends Result> command, final TextDispatcherResult textDispatcherResult) throws DispatchException {
-        LOGGER.debug("Parsing result after remote execution");
+        LOGGER.debug("Parsing result after remote execution: "+textDispatcherResult.toString(LOGGER.isDebugEnabled()));
         if (textDispatcherResult.getHeader(RemoteDispatcher.HEADER_RESULT_EXCEPTION_CLASS) != null) {
             LOGGER.error("Result contains exception headers");
             throw ExceptionUtil.instantiateDispatchException(textDispatcherResult.getHeader(RemoteDispatcher.HEADER_RESULT_EXCEPTION_CLASS), textDispatcherResult.getTextResult());

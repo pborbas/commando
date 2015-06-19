@@ -15,7 +15,7 @@ public interface Action<C extends Command<R>, R extends Result> {
      * 
      * @throws CommandValidationException
      */
-    Action<C, R> validate(C command) throws CommandValidationException;
+    Action<C, R> validate(C command) throws CommandValidationException, DispatchException;
 
     /**
      * Handles the specified action.

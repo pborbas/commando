@@ -1,13 +1,13 @@
 package org.commando.exception;
 
-import javax.naming.spi.DirStateFactory.Result;
-
 import org.commando.command.Command;
+
+import javax.naming.spi.DirStateFactory.Result;
 
 /*
  * Validation exception that contains the error message, the reasons why it failed and the validated command 
  */
-public class CommandValidationException extends VadilationException {
+public class CommandValidationException extends ValidationException {
 
     private static final long serialVersionUID = 1L;
     private final Command<? extends Result> command;

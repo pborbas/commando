@@ -1,9 +1,9 @@
 package org.commando.result;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.commando.dispatcher.filter.DispatchFilter;
+
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Wrapps a {@link Result} and adds header feature to it. The
@@ -15,7 +15,7 @@ import org.commando.dispatcher.filter.DispatchFilter;
  */
 public class DispatchResult<R extends Result> {
     private final R result;
-    private final Map<String, String> headers = new HashMap<String, String>();
+	private final Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     public DispatchResult(final R result) {
         super();

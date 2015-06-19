@@ -1,10 +1,10 @@
 package org.commando.command;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.commando.dispatcher.filter.DispatchFilter;
 import org.commando.result.Result;
+
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Wrapps a {@link Command} and adds header feature to it. The
@@ -16,7 +16,7 @@ import org.commando.result.Result;
  */
 public class DispatchCommand {
     private final Command<? extends Result> command;
-    private final Map<String, String> headers = new HashMap<String, String>();
+    private final Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     public DispatchCommand(final Command<? extends Result> command) {
 	super();

@@ -7,12 +7,12 @@ import java.util.List;
 /*
  * Validation exception that contains the error message, the reasons why it failed 
  */
-public class VadilationException extends DispatchException {
+public class ValidationException extends DispatchException {
 
     private static final long serialVersionUID = 1L;
     private final List<String> reasons;
     
-    public VadilationException(String message, String... reasons) {
+    public ValidationException(String message, String... reasons) {
         super(message);
         if (reasons!=null) {
             this.reasons=Arrays.asList(reasons);

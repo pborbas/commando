@@ -7,6 +7,6 @@ import org.commando.dispatcher.Dispatcher;
  * 
  */
 public interface RemoteDispatcher extends Dispatcher {
-    public static final String HEADER_RESULT_EXCEPTION_CLASS="resultExceptionClass";
+    public static final String HEADER_RESULT_EXCEPTION_CLASS="Result-Exception-Class";
 
 }
