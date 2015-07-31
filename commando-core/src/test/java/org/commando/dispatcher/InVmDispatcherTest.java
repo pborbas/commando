@@ -1,13 +1,5 @@
 package org.commando.dispatcher;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.TimeUnit;
-
 import org.commando.action.Action;
 import org.commando.command.Command;
 import org.commando.example.SampleAction;
@@ -22,6 +14,10 @@ import org.commando.result.ResultFuture;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.*;
 
 public class InVmDispatcherTest {
 
@@ -103,7 +99,7 @@ public class InVmDispatcherTest {
 
         @Override
         public SampleResult execute(final SampleCommand command) {
-            return new SampleResult(command.getCommandId());
+            return new SampleResult(command.getCommandId(), command.getData());
         }
 
         @Override

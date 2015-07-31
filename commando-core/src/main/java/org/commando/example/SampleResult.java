@@ -1,11 +1,11 @@
 package org.commando.example;
 
-import org.commando.result.AbstractResult;
+import org.commando.result.AbstractSimpleResult;
 
-public class SampleResult extends AbstractResult {
+public class SampleResult extends AbstractSimpleResult<String> {
 
-    public SampleResult(final String commandId) {
-        super(commandId);
+    public SampleResult(final String commandId, String data) {
+        super(commandId, data);
     }
 
 }

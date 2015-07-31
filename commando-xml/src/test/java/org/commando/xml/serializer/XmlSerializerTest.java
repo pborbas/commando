@@ -13,20 +13,25 @@ public class XmlSerializerTest {
 
     @Test
     public void testCommandInheritanceSerialization() throws CommandSerializationException {
-        SampleCommand sampleCommand = new SampleCommand();
+        String data="Őűúépú";
+		SampleCommand sampleCommand = new SampleCommand();
+		sampleCommand.setData(data);
         Serializer serializer = new XmlSerializer();
         String textCommand = serializer.toText(sampleCommand);
         Command<?> command = serializer.toCommand(textCommand);
         Assert.assertEquals(sampleCommand.getClass(), command.getClass());
         Assert.assertTrue(command instanceof SampleCommand);
+		Assert.assertEquals(data, ((SampleCommand)command).getData());
     }
 
     @Test
     public void testResultInheritanceSerialization() throws CommandSerializationException {
-        SampleResult sampleResult=new SampleResult("1");
+		String data="Őűúépú";
+		SampleResult sampleResult=new SampleResult("1", data);
         Serializer serializer = new XmlSerializer();
         String textResult = serializer.toText(sampleResult);
         Result result = serializer.toResult(textResult);
         Assert.assertEquals(sampleResult.getClass(), result.getClass());
+		Assert.assertEquals(data, ((SampleResult)result).getValue());
     }
 }

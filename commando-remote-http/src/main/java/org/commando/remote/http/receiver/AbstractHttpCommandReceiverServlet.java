@@ -3,6 +3,7 @@ package org.commando.remote.http.receiver;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.entity.ContentType;
 import org.commando.exception.DispatchException;
 import org.commando.remote.model.TextDispatcherCommand;
 import org.commando.remote.model.TextDispatcherResult;
@@ -21,6 +22,7 @@ public abstract class AbstractHttpCommandReceiverServlet extends HttpServlet {
 
     private static final Log LOGGER = LogFactory.getLog(AbstractHttpCommandReceiverServlet.class);
     private static final long serialVersionUID = 1L;
+	private ContentType contentType=ContentType.APPLICATION_JSON;
 
     private CommandReceiver commandReceiver;
 
@@ -58,7 +60,7 @@ public abstract class AbstractHttpCommandReceiverServlet extends HttpServlet {
 
     protected void writeResponse(final ServletResponse response, final TextDispatcherResult textDispatcherResult) throws DispatchException {
         try {
-            IOUtils.write(textDispatcherResult.getTextResult(), response.getOutputStream());
+            IOUtils.write(textDispatcherResult.getTextResult(), response.getOutputStream(), this.contentType.getCharset().name());
             for (String headerName:textDispatcherResult.getHeaders().keySet()) {
                 ((HttpServletResponse)response).setHeader(headerName, textDispatcherResult.getHeader(headerName));
             }
@@ -70,7 +72,7 @@ public abstract class AbstractHttpCommandReceiverServlet extends HttpServlet {
 
     public TextDispatcherCommand parseRequest(final HttpServletRequest httpRequest) throws DispatchException {
         try {
-            String textCommand = IOUtils.toString(httpRequest.getInputStream());
+            String textCommand = IOUtils.toString(httpRequest.getInputStream(), this.contentType.getCharset().name());
             TextDispatcherCommand textDispatcherCommand = new TextDispatcherCommand(textCommand);
             Enumeration<String> headerNames = httpRequest.getHeaderNames();
             String headerName;
@@ -92,4 +94,11 @@ public abstract class AbstractHttpCommandReceiverServlet extends HttpServlet {
 
     protected abstract CommandReceiver initCommandReceiver(final ServletConfig config) throws ServletException;
 
+	public ContentType getContentType() {
+		return contentType;
+	}
+
+	public void setContentType(ContentType contentType) {
+		this.contentType = contentType;
+	}
 }

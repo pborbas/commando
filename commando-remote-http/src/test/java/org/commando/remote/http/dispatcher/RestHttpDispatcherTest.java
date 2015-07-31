@@ -12,9 +12,7 @@ import org.commando.result.Result;
 import org.commando.testbase.test.AbstractDispatcherTest;
 import org.commando.xml.serializer.XmlSerializer;
 import org.eclipse.jetty.server.Server;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import java.util.concurrent.TimeUnit;
 
@@ -28,6 +26,15 @@ public class RestHttpDispatcherTest extends AbstractDispatcherTest {
         this.dispatcher = new RestHttpDispatcher("http://localhost:8123/", new XmlSerializer());
         this.dispatcher.setTimeout(1000);
     }
+
+	@Test
+	public void testRemoteCallWithUTF8Encoding() throws DispatchException {
+		String data="öüóŐú";
+		SampleCommand command=new SampleCommand(data);
+		String resultData=this.dispatcher.dispatch(command).getResult(10000, TimeUnit.MILLISECONDS).getValue();
+		Assert.assertEquals(data, resultData);
+
+	}
 
     @Test(expected=CircuiteBreakerException.class)
     public void testCircuiteBreaker() throws DispatchException {

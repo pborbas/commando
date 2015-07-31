@@ -6,7 +6,7 @@ public class SampleAction extends AbstractAction<SampleCommand, SampleResult> {
 
     @Override
     public SampleResult execute(final SampleCommand command) {
-        return new SampleResult(command.getCommandId());
+        return new SampleResult(command.getCommandId(), command.getData());
     }
 
 }
