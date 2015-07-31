@@ -1,11 +1,5 @@
 package org.commando.dispatcher;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.commando.action.Action;
 import org.commando.command.Command;
 import org.commando.command.DispatchCommand;
@@ -17,13 +11,16 @@ import org.commando.exception.DuplicateActionException;
 import org.commando.result.DispatchResult;
 import org.commando.result.Result;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * InVm implementation of the {@link Dispatcher} Registers itself as the last {@link DispatchFilter} in the chain as an
  * executor filter.
  */
 public class InVmDispatcher extends AbstractDispatcher implements Dispatcher, Executor {
 
-    private static final Log LOGGER = LogFactory.getLog(InVmDispatcher.class);
     private Map<Class<?>, Action<? extends Command<? extends Result>, ? extends Result>> actionsMap = new HashMap<Class<?>, Action<? extends Command<? extends Result>, ? extends Result>>();
 
     public InVmDispatcher() {
