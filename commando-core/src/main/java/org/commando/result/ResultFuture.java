@@ -1,19 +1,15 @@
 package org.commando.result;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
 import org.commando.command.Command;
 import org.commando.dispatcher.Dispatcher;
 import org.commando.dispatcher.DispatcherCallback;
 import org.commando.dispatcher.filter.DispatchFilter;
-import org.commando.exception.AsyncErrorException;
-import org.commando.exception.AsyncInterruptedException;
-import org.commando.exception.AsyncTimeoutException;
-import org.commando.exception.DispatchException;
-import org.commando.exception.ExceptionUtil;
+import org.commando.exception.*;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Wrapper for Java {@link Future} to force get timeouts and convert Exceptions
@@ -33,6 +29,7 @@ public class ResultFuture<R extends Result> implements Future<R>, DispatcherCall
     private R result;
     private DispatchException exception;
     private ResultCallback<R> callback;
+	private final String threadName=Thread.currentThread().getName();
 
     public ResultFuture(final long timeout) {
 	super();
@@ -152,4 +149,7 @@ public class ResultFuture<R extends Result> implements Future<R>, DispatcherCall
 	}
     }
 
+	public String getThreadName() {
+		return threadName;
+	}
 }
