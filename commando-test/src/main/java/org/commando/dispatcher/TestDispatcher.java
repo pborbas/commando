@@ -7,10 +7,7 @@ import org.commando.result.Result;
 import org.commando.result.ResultFuture;
 import org.junit.Assert;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by pborbas on 21/05/15.
@@ -23,41 +20,110 @@ public class TestDispatcher implements ChainableDispatcher {
 		throw new UnsupportedOperationException("Not yet implemented for tests");
 	}
 
+	public interface ResultSelector<C extends Command<R>, R extends Result> {
+		boolean isResultFor(C command);
+		R getResult() throws DispatchException;
+	}
+
 	@Override
 	public long getTimeout() {
 		return 60000;
 	}
 
-	private List<Command> executedCommands = new LinkedList<>();
-	private Map<String, Result> resultForCommandIds = new HashMap<>();
-	private Map<Class<? extends Command>, Result> resultForCommandTypes = new HashMap<>();
-	private Map<Class<? extends Command>, DispatchException> exceptionForCommandTypes = new HashMap<>();
-	private Map<Command, Result> resultForCommands = new HashMap<>();
+	private final List<ResultSelector> registeredResults = Collections.synchronizedList(new ArrayList<ResultSelector>());
+	private List<Command> executedCommands = Collections.synchronizedList(new LinkedList<Command>());
 
-	public void registerResult(String commandId, Result result) {
-		this.resultForCommandIds.put(commandId, result);
+	/**
+	 * Result for commandId
+	 *
+	 * @param commandId
+	 * @param result
+	 */
+	public void registerResult(final String commandId, final Result result) {
+		this.registeredResults.add(new ResultSelector() {
+			@Override
+			public boolean isResultFor(Command command) {
+				return commandId.equals(command.getCommandId());
+			}
+
+			@Override
+			public Result getResult() {
+				return result;
+			}
+		});
 	}
 
-	public void registerResult(Class<? extends Command> commandType, Result result) {
-		this.resultForCommandTypes.put(commandType, result);
+	/**
+	 * Result for command class type
+	 *
+	 * @param commandType
+	 * @param result
+	 */
+	public void registerResult(final Class<? extends Command> commandType, final Result result) {
+		this.registeredResults.add(new ResultSelector() {
+			@Override
+			public boolean isResultFor(Command command) {
+				return command.getClass().equals(commandType);
+			}
+
+			@Override
+			public Result getResult() {
+				return result;
+			}
+		});
 	}
 
-	public void registerResult(Command command, Result result) {
-		this.resultForCommands.put(command, result);
+	public void registerException(final Class<? extends Command> commandType, final DispatchException e) {
+		this.registeredResults.add(new ResultSelector() {
+			@Override
+			public boolean isResultFor(Command command) {
+				return command.getClass().equals(commandType);
+			}
+
+			@Override
+			public Result getResult() throws DispatchException {
+				throw e;
+			}
+		});
+	}
+
+	/**
+	 * Result for command.equals()
+	 *
+	 * @param command
+	 * @param result
+	 */
+	public void registerResult(final Command command, final Result result) {
+		this.registeredResults.add(new ResultSelector() {
+			@Override
+			public boolean isResultFor(Command currentCommand) {
+				return command.equals(currentCommand);
+			}
+
+			@Override
+			public Result getResult() {
+				return result;
+			}
+		});
+	}
+
+
+	/**
+	 * Result for selector. Use this for any custom logic like if the command.getSpecificMethod returns this or that.
+	 * @param resultSelector
+	 */
+	public void registerResult(ResultSelector resultSelector) {
+		this.registeredResults.add(resultSelector);
 	}
 
 	@Override
 	public <C extends Command<R>, R extends Result> ResultFuture<R> dispatch(C command) throws DispatchException {
 		this.executedCommands.add(command);
 		R result = null;
-		if (this.resultForCommandIds.containsKey(command.getCommandId())) {
-			result = (R) this.resultForCommandIds.get(command.getCommandId());
-		} else if (this.resultForCommands.containsKey(command)) {
-			result = (R) this.resultForCommands.get(command);
-		} else if (this.resultForCommandTypes.containsKey(command.getCommandType())) {
-			result = (R) this.resultForCommandTypes.get(command.getCommandType());
-		} else if (this.exceptionForCommandTypes.containsKey(command.getCommandType())) {
-			throw this.exceptionForCommandTypes.get(command.getCommandType());
+		for (ResultSelector rs : this.registeredResults) {
+			if (rs.isResultFor(command)) {
+				result = (R) rs.getResult();
+			}
 		}
 		if (result == null) {
 			throw new DispatchException(
@@ -76,23 +142,28 @@ public class TestDispatcher implements ChainableDispatcher {
 		return executedCommands;
 	}
 
-	public <C extends Command> C assertExecutedOnce(Class<C> commandType) {
-		C foundCommand = null;
+	public <C extends Command> List<C> getExecutedCommands(Class<C> commandType) {
+		List<C> executeList = new LinkedList<>();
 		for (Command command : this.executedCommands) {
 			if (command.getCommandType().equals(commandType)) {
-				if (foundCommand != null) {
-					Assert.fail("Executed commands contained more than one command of type:" + commandType);
-				}
-				foundCommand = (C) command;
+				executeList.add((C) command);
 			}
 		}
-		if (foundCommand == null) {
-			Assert.fail("Command never executed with type:" + commandType);
-		}
-		return foundCommand;
+		return executeList;
 	}
 
-	public void registerException(Class<? extends Command> commandType, DispatchException e) {
-		this.exceptionForCommandTypes.put(commandType, e);
+	public <C extends Command> C assertExecutedOnce(Class<C> commandType) {
+		List<C> executeList = this.assertExecutionCount(commandType, 1);
+		return executeList.get(0);
 	}
+
+	public <C extends Command> List<C> assertExecutionCount(Class<C> commandType, int expectedCount) {
+		List<C> executeList = this.getExecutedCommands(commandType);
+		if (executeList.size() != expectedCount) {
+			Assert.fail("Command of type:" + commandType + " was executed " + executeList.size() + " times instead of "
+					+ expectedCount);
+		}
+		return executeList;
+	}
+
 }
