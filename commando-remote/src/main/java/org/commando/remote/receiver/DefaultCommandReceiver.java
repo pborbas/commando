@@ -33,7 +33,7 @@ public class DefaultCommandReceiver implements CommandReceiver {
             DispatchResult<? extends Result> dispatchResult = this.dispatcher.dispatch(dispatchCommand).getDispatchResult();
             return this.convertResult(dispatchResult);
         } catch (Throwable e) {
-            LOGGER.error("Error while dispatching command: " + e, e);
+            if (LOGGER.isDebugEnabled()) LOGGER.warn(e, e); else LOGGER.warn(e);
             return this.createErrorResultMessage(dispatchCommand, e);
         }
     }

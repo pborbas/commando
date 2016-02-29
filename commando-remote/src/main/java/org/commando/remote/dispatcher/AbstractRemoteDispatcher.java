@@ -47,7 +47,7 @@ public abstract class AbstractRemoteDispatcher extends AbstractDispatcher implem
     protected DispatchResult<Result> parseResult(final Command<? extends Result> command, final TextDispatcherResult textDispatcherResult) throws DispatchException {
         LOGGER.debug("Parsing result after remote execution: "+textDispatcherResult.toString(LOGGER.isDebugEnabled()));
         if (textDispatcherResult.getHeader(RemoteDispatcher.HEADER_RESULT_EXCEPTION_CLASS) != null) {
-            LOGGER.error("Result contains exception headers");
+            LOGGER.warn("Result contains exception headers");
             throw ExceptionUtil.instantiateDispatchException(textDispatcherResult.getHeader(RemoteDispatcher.HEADER_RESULT_EXCEPTION_CLASS), textDispatcherResult.getTextResult());
         }
         DispatchResult<Result> dispatchResult;
