@@ -19,9 +19,9 @@ import java.util.Map;
  * InVm implementation of the {@link Dispatcher} Registers itself as the last {@link DispatchFilter} in the chain as an
  * executor filter.
  */
-public class InVmDispatcher extends AbstractDispatcher implements Dispatcher, Executor {
+public class InVmDispatcher<A extends Action> extends AbstractDispatcher implements Dispatcher, Executor {
 
-    private Map<Class<?>, Action<? extends Command<? extends Result>, ? extends Result>> actionsMap = new HashMap<Class<?>, Action<? extends Command<? extends Result>, ? extends Result>>();
+    private Map<Class<?>, A> actionsMap = new HashMap<>();
 
     public InVmDispatcher() {
         super();
@@ -55,14 +55,14 @@ public class InVmDispatcher extends AbstractDispatcher implements Dispatcher, Ex
         throw new ActionNotFoundException("Action not found for command:" + command);
     }
 
-    public void setActions(final List<Action<? extends Command<? extends Result>, ? extends Result>> actions) throws DuplicateActionException {
-        this.actionsMap = new HashMap<Class<?>, Action<? extends Command<? extends Result>, ? extends Result>>();
-        for (Action<? extends Command<? extends Result>, ? extends Result> action : actions) {
+    public void setActions(final List<A> actions) throws DuplicateActionException {
+        this.actionsMap = new HashMap<>();
+        for (A action : actions) {
             this.registerAction(action);
         }
     }
 
-    public void registerAction(final Action<? extends Command<? extends Result>, ? extends Result> action) throws DuplicateActionException {
+    public void registerAction(final A action) throws DuplicateActionException {
         if (this.actionsMap.containsKey(action.getCommandType())) {
             throw new DuplicateActionException("Duplicate action:" + action.getClass().getName() + " for command type:" + action.getCommandType());
         }

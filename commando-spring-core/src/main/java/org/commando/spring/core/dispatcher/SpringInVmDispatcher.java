@@ -1,7 +1,5 @@
 package org.commando.spring.core.dispatcher;
 
-import java.util.List;
-
 import org.commando.action.Action;
 import org.commando.command.Command;
 import org.commando.dispatcher.Dispatcher;
@@ -14,10 +12,12 @@ import org.commando.result.ResultFuture;
 import org.commando.spring.core.action.DispatchAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 /**
  * Spring version of the {@link InVmDispatcher} which contains spring specific annotations for async execution, transactions and autodetect of {@link DispatchAction} classes
  */
-public class SpringInVmDispatcher extends InVmDispatcher implements Dispatcher {
+public class SpringInVmDispatcher<A extends Action> extends InVmDispatcher<A> implements Dispatcher {
 
     public SpringInVmDispatcher() {
         super();
@@ -35,7 +35,7 @@ public class SpringInVmDispatcher extends InVmDispatcher implements Dispatcher {
 
     @Override
     @Autowired(required = false)
-    public void setActions(final List<Action<? extends Command<? extends Result>, ? extends Result>> actions) throws DuplicateActionException {
+    public void setActions(final List<A> actions) throws DuplicateActionException {
         super.setActions(actions);
     }
 
