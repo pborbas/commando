@@ -7,6 +7,8 @@ import org.commando.command.DispatchCommand;
 import org.commando.dispatcher.filter.DefaultDispatchFilterChain;
 import org.commando.dispatcher.filter.DispatchFilter;
 import org.commando.dispatcher.filter.Executor;
+import org.commando.dispatcher.security.NoopSecurityContextManager;
+import org.commando.dispatcher.security.SecurityContextManager;
 import org.commando.exception.DispatchException;
 import org.commando.result.DispatchResult;
 import org.commando.result.Result;
@@ -29,6 +31,7 @@ public abstract class AbstractDispatcher implements Dispatcher, ChainableDispatc
 	private ExecutorService executorService;
 	private final List<DispatchFilter> filters;
 	private Long timeout;
+	private SecurityContextManager securityContextManager=new NoopSecurityContextManager();
 
 	public AbstractDispatcher() {
 		this(new LinkedList<DispatchFilter>());
@@ -40,7 +43,15 @@ public abstract class AbstractDispatcher implements Dispatcher, ChainableDispatc
 		this.filters.addAll(filters);
 		this.executorService = new ForkJoinPool();
 		this.timeout = DEFAULT_TIMEOUT;
-		this.LOGGER=LogFactory.getLog(getClass());
+		this.LOGGER = LogFactory.getLog(getClass());
+	}
+
+	public SecurityContextManager getSecurityContextManager() {
+		return securityContextManager;
+	}
+
+	public void setSecurityContextManager(SecurityContextManager securityContextManager) {
+		this.securityContextManager = securityContextManager;
 	}
 
 	private static class WorkerThread extends ForkJoinWorkerThread {
@@ -61,7 +72,7 @@ public abstract class AbstractDispatcher implements Dispatcher, ChainableDispatc
 	}
 
 	@Override
-	public <C extends Command<R>, R extends Result>  R dispatchSync(C command) throws DispatchException{
+	public <C extends Command<R>, R extends Result> R dispatchSync(C command) throws DispatchException {
 		DispatchCommand dispatchCommand = new DispatchCommand(command);
 		final ResultFuture<R> result = new ResultFuture<R>(this.getResultTimeout(dispatchCommand));
 		DispatchResult<Result> dispatchResult = this.executeCommonWorkflow(dispatchCommand, result);
@@ -77,13 +88,27 @@ public abstract class AbstractDispatcher implements Dispatcher, ChainableDispatc
 							.getCommand().getCommandId() + " to executor thread");
 		}
 		final ResultFuture<R> result = new ResultFuture<R>(this.getResultTimeout(dispatchCommand));
+		final Object securityContextInfo=this.securityContextManager.getSecurityContext();
 		result.setWrappedFuture(this.executorService.submit(new Callable<DispatchResult<R>>() {
 			@Override
 			public DispatchResult<R> call() throws Exception {
-				return AbstractDispatcher.this.executeCommonWorkflow(dispatchCommand, result);
+				try {
+					securityContextManager.setSecurityContext(securityContextInfo);
+					return AbstractDispatcher.this.executeCommonWorkflow(dispatchCommand, result);
+				} catch (DispatchException | RuntimeException e) {
+					logException(e, dispatchCommand);
+					throw e;
+				} finally {
+					securityContextManager.clearSecurityContext();
+				}
 			}
 		}));
 		return result;
+	}
+
+	protected void logException(Exception e, DispatchCommand dispatchCommand) {
+		LOGGER.error("Error while executing command: " + dispatchCommand.getCommand().getClass() + ": " + e,
+				e);
 	}
 
 	protected long getResultTimeout(final DispatchCommand dispatchCommand) {

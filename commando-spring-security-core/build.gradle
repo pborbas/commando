@@ -1,0 +1,5 @@
+dependencies {
+    compile project(':commando-spring-core')
+    compile 'org.springframework.security:spring-security-core:'+springSecurityVersion
+    testCompile  group: 'org.springframework', name: 'spring-test', version: springVersion
+}

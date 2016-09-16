@@ -1,10 +1,5 @@
 package org.commando.spring.remote.config;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
 import org.commando.dispatcher.ChainableDispatcher;
 import org.commando.remote.receiver.CommandReceiver;
 import org.commando.remote.receiver.DefaultCommandReceiver;
@@ -12,10 +7,16 @@ import org.commando.remote.serializer.Serializer;
 import org.commando.spring.core.dispatcher.SpringInVmDispatcher;
 import org.commando.xml.serializer.XmlSerializer;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
-public class DefaultReceiverConfiguration {
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * Extend it as a @Configuration class to have a default http receiver for all your actions
+ */
+public abstract class AbstractDefaultReceiverConfiguration {
 
     @Bean
     public Serializer serializer() {

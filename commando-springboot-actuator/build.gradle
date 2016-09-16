@@ -1,8 +1,6 @@
 dependencies {
-    compile project(':commando-spring-remote-http')
     compile project(':commando-springboot-core')
-	
-    //provided 'org.springframework.boot:spring-boot:1.1.8.RELEASE'
+    provided group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: springBootVersion
 
     testCompile  group: 'org.springframework', name: 'spring-test', version: springVersion
 

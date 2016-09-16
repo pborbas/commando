@@ -1,10 +1,5 @@
 package org.commando.spring.remote.http.config;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
 import org.commando.remote.http.dispatcher.RestHttpDispatcherFactory;
 import org.commando.remote.serializer.Serializer;
 import org.commando.spring.core.dispatcher.SpringDispatcherFactory;
@@ -14,6 +9,12 @@ import org.commando.xml.serializer.XmlSerializerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+@Deprecated //no need for this.
 @Configuration
 public class DefaultHttpSenderConfiguration {
 

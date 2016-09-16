@@ -22,7 +22,7 @@ public class TestDispatcher implements ChainableDispatcher {
 
 	public interface ResultSelector<C extends Command<R>, R extends Result> {
 		boolean isResultFor(C command);
-		R getResult() throws DispatchException;
+		R getResult(C command) throws DispatchException;
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public class TestDispatcher implements ChainableDispatcher {
 			}
 
 			@Override
-			public Result getResult() {
+			public Result getResult(Command command) {
 				return result;
 			}
 		});
@@ -67,7 +67,7 @@ public class TestDispatcher implements ChainableDispatcher {
 			}
 
 			@Override
-			public Result getResult() {
+			public Result getResult(Command command) {
 				return result;
 			}
 		});
@@ -81,7 +81,7 @@ public class TestDispatcher implements ChainableDispatcher {
 			}
 
 			@Override
-			public Result getResult() throws DispatchException {
+			public Result getResult(Command command) throws DispatchException {
 				throw e;
 			}
 		});
@@ -101,7 +101,7 @@ public class TestDispatcher implements ChainableDispatcher {
 			}
 
 			@Override
-			public Result getResult() {
+			public Result getResult(Command command) {
 				return result;
 			}
 		});
@@ -122,7 +122,7 @@ public class TestDispatcher implements ChainableDispatcher {
 		R result = null;
 		for (ResultSelector rs : this.registeredResults) {
 			if (rs.isResultFor(command)) {
-				result = (R) rs.getResult();
+				result = (R) rs.getResult(command);
 			}
 		}
 		if (result == null) {

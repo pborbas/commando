@@ -6,14 +6,14 @@ import javax.jms.Destination;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.commando.remote.jms.dispatch.JmsTemplate;
 import org.commando.remote.jms.receiver.JmsCommandReceiverListener;
-import org.commando.spring.remote.config.DefaultReceiverConfiguration;
+import org.commando.spring.remote.config.AbstractDefaultReceiverConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 
 @Configuration
-public class EnableJmsCommandReceiver extends DefaultReceiverConfiguration {
+public class EnableJmsCommandDefaultReceiver extends AbstractDefaultReceiverConfiguration {
 
     @Autowired
     ConnectionFactory connectionFactory;
