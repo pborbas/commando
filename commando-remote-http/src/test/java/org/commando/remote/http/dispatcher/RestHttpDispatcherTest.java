@@ -1,7 +1,7 @@
 package org.commando.remote.http.dispatcher;
 
 import org.commando.command.Command;
-import org.commando.dispatcher.ChainableDispatcher;
+import org.commando.dispatcher.Dispatcher;
 import org.commando.example.SampleCommand;
 import org.commando.exception.DispatchException;
 import org.commando.json.serializer.JsonSerializer;
@@ -73,7 +73,7 @@ public class RestHttpDispatcherTest extends AbstractDispatcherTest {
     }
 
     @Override
-    protected ChainableDispatcher getDispatcher() {
+    protected Dispatcher getDispatcher() {
         return this.dispatcher;
     }
 

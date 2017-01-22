@@ -2,13 +2,11 @@ package org.commando.dispatcher;
 
 import org.commando.action.Action;
 import org.commando.command.Command;
-import org.commando.command.DispatchCommand;
 import org.commando.dispatcher.filter.DispatchFilter;
 import org.commando.dispatcher.filter.Executor;
 import org.commando.exception.ActionNotFoundException;
 import org.commando.exception.DispatchException;
 import org.commando.exception.DuplicateActionException;
-import org.commando.result.DispatchResult;
 import org.commando.result.Result;
 
 import java.util.HashMap;
@@ -37,10 +35,8 @@ public class InVmDispatcher<A extends Action> extends AbstractDispatcher impleme
     }
 
     @Override
-    public DispatchResult<Result> execute(final DispatchCommand dispatchCommand) throws DispatchException {
-        Result result = this.executeInVm(dispatchCommand.getCommand());
-        DispatchResult<Result> dispatchResult = new DispatchResult<Result>(result);
-        return dispatchResult;
+    public <C extends Command<R>, R extends Result> R execute(C dispatchCommand) throws DispatchException {
+        return this.executeInVm(dispatchCommand);
     }
 
     protected <C extends Command<R>, R extends Result> R executeInVm(final C command) throws DispatchException {

@@ -1,9 +1,7 @@
 package org.commando.result;
 
 import org.commando.command.Command;
-import org.commando.dispatcher.Dispatcher;
 import org.commando.dispatcher.DispatcherCallback;
-import org.commando.dispatcher.filter.DispatchFilter;
 import org.commando.exception.*;
 
 import java.util.concurrent.ExecutionException;
@@ -13,9 +11,7 @@ import java.util.concurrent.TimeoutException;
 
 /**
  * Wrapper for Java {@link Future} to force get timeouts and convert Exceptions
- * for more convenient usage. Besides the concrete {@link Result} it gives
- * access to the {@link Dispatcher}'s {@link DispatchResult} which contains
- * headers of local and/or remote {@link DispatchFilter}s
+ * for more convenient usage.
  * 
  * @author pborbas
  * @param <R>
@@ -25,7 +21,7 @@ public class ResultFuture<R extends Result> implements Future<R>, DispatcherCall
 
     private final long startTime;
     private final long timeout;
-    private Future<DispatchResult<R>> wrappedFuture;
+    private Future<R> wrappedFuture;
     private R result;
     private DispatchException exception;
     private ResultCallback<R> callback;
@@ -37,13 +33,13 @@ public class ResultFuture<R extends Result> implements Future<R>, DispatcherCall
 	this.startTime = System.currentTimeMillis();
     }
 
-    public ResultFuture(final Future<DispatchResult<R>> wrappedFuture, final long timeout) {
+    public ResultFuture(final Future<R> wrappedFuture, final long timeout) {
 	this.wrappedFuture = wrappedFuture;
 	this.timeout = timeout;
 	this.startTime = System.currentTimeMillis();
     }
 
-    public void setWrappedFuture(final Future<DispatchResult<R>> wrappedFuture) {
+    public void setWrappedFuture(final Future<R> wrappedFuture) {
 	this.wrappedFuture = wrappedFuture;
     }
 
@@ -98,7 +94,7 @@ public class ResultFuture<R extends Result> implements Future<R>, DispatcherCall
      */
     public R get() throws InterruptedException, ExecutionException {
 	try {
-	    return this.wrappedFuture.get(this.timeout, TimeUnit.MILLISECONDS).getResult();
+	    return this.wrappedFuture.get(this.timeout, TimeUnit.MILLISECONDS);
 	} catch (TimeoutException e) {
 	    throw new ExecutionException(e);
 	}
@@ -110,7 +106,7 @@ public class ResultFuture<R extends Result> implements Future<R>, DispatcherCall
      * use getResult instead
      */
     public R get(final long timeout, final TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-	return this.wrappedFuture.get(timeout, unit).getResult();
+	return this.wrappedFuture.get(timeout, unit);
     }
 
     public R getResult() throws AsyncTimeoutException, AsyncErrorException, AsyncInterruptedException, DispatchException {
@@ -118,29 +114,21 @@ public class ResultFuture<R extends Result> implements Future<R>, DispatcherCall
     }
 
     public R getResult(final long timeout, final TimeUnit unit) throws AsyncTimeoutException, AsyncErrorException, AsyncInterruptedException, DispatchException {
-	return this.getDispatchResult(timeout, unit).getResult();
-    }
-
-    public DispatchResult<R> getDispatchResult() throws AsyncTimeoutException, AsyncErrorException, AsyncInterruptedException, DispatchException {
-	return this.getDispatchResult(this.timeout, TimeUnit.MILLISECONDS);
-    }
-
-    public DispatchResult<R> getDispatchResult(final long timeout, final TimeUnit unit) throws AsyncTimeoutException, AsyncErrorException, AsyncInterruptedException, DispatchException {
-	try {
-	    return this.wrappedFuture.get(timeout, unit);
-	} catch (InterruptedException e) {
-	    throw new AsyncInterruptedException("Execution interrupted:" + e, e);
-	} catch (ExecutionException e) {
-	    DispatchException dispatchException = ExceptionUtil.findDispatchException(e, 0);
-	    if (dispatchException != null) {
-		throw dispatchException;
-	    }
-	    throw new AsyncErrorException("Execution error:" + e, e);
-	} catch (TimeoutException e) {
-	    throw new AsyncTimeoutException("Execution timed out:" + e, e);
-	} finally {
-	    this.killOnTimeout();
-	}
+		try {
+			return this.wrappedFuture.get(timeout, unit);
+		} catch (InterruptedException e) {
+			throw new AsyncInterruptedException("Execution interrupted:" + e, e);
+		} catch (ExecutionException e) {
+			DispatchException dispatchException = ExceptionUtil.findDispatchException(e, 0);
+			if (dispatchException != null) {
+				throw dispatchException;
+			}
+			throw new AsyncErrorException("Execution error:" + e, e);
+		} catch (TimeoutException e) {
+			throw new AsyncTimeoutException("Execution timed out:" + e, e);
+		} finally {
+			this.killOnTimeout();
+		}
     }
 
     private void killOnTimeout() {

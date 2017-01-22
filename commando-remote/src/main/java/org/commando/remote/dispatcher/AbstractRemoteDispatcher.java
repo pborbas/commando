@@ -3,7 +3,6 @@ package org.commando.remote.dispatcher;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.commando.command.Command;
-import org.commando.command.DispatchCommand;
 import org.commando.dispatcher.AbstractDispatcher;
 import org.commando.dispatcher.filter.Executor;
 import org.commando.exception.CommandSerializationException;
@@ -12,7 +11,6 @@ import org.commando.exception.ExceptionUtil;
 import org.commando.remote.model.TextDispatcherCommand;
 import org.commando.remote.model.TextDispatcherResult;
 import org.commando.remote.serializer.Serializer;
-import org.commando.result.DispatchResult;
 import org.commando.result.NoResult;
 import org.commando.result.Result;
 import org.commando.util.CommandUtil;
@@ -37,24 +35,24 @@ public abstract class AbstractRemoteDispatcher extends AbstractDispatcher implem
     }
 
     @Override
-    public DispatchResult<Result> execute(final DispatchCommand dispatchCommand) throws DispatchException {
+	public <C extends Command<R>, R extends Result> R execute(C dispatchCommand) throws DispatchException{
         TextDispatcherCommand textDispatcherCommand=this.serializeCommand(dispatchCommand);
 		LOGGER.debug("Executing remote command: "+textDispatcherCommand.toString(LOGGER.isDebugEnabled()));
-        TextDispatcherResult textDispatcherResult=this.executeRemote(dispatchCommand.getCommand(), textDispatcherCommand, this.getTimeout());
-        return this.parseResult(dispatchCommand.getCommand(), textDispatcherResult);
+        TextDispatcherResult textDispatcherResult=this.executeRemote(dispatchCommand, textDispatcherCommand, this.getTimeout());
+        return this.parseResult(dispatchCommand, textDispatcherResult);
     }
 
-    protected DispatchResult<Result> parseResult(final Command<? extends Result> command, final TextDispatcherResult textDispatcherResult) throws DispatchException {
+    protected <C extends Command<R>, R extends Result> R parseResult(final C command, final TextDispatcherResult textDispatcherResult) throws DispatchException {
         LOGGER.debug("Parsing result after remote execution: "+textDispatcherResult.toString(LOGGER.isDebugEnabled()));
         if (textDispatcherResult.getHeader(RemoteDispatcher.HEADER_RESULT_EXCEPTION_CLASS) != null) {
             LOGGER.warn("Result contains exception headers");
             throw ExceptionUtil.instantiateDispatchException(textDispatcherResult.getHeader(RemoteDispatcher.HEADER_RESULT_EXCEPTION_CLASS), textDispatcherResult.getTextResult());
         }
-        DispatchResult<Result> dispatchResult;
+        R dispatchResult;
         if (CommandUtil.isNoResultCommand(command)) {
-            return dispatchResult=new DispatchResult<Result>(new NoResult(command.getCommandId()));
+            return (R) new NoResult(command.getCommandId());
         } else {
-            dispatchResult=new DispatchResult<Result>(this.serializer.toResult(textDispatcherResult.getTextResult()));
+            dispatchResult=(R) this.serializer.toResult(textDispatcherResult.getTextResult());
         }
         dispatchResult.getHeaders().putAll(textDispatcherResult.getHeaders());
         return dispatchResult;
@@ -66,9 +64,9 @@ public abstract class AbstractRemoteDispatcher extends AbstractDispatcher implem
      * 
      * @throws CommandSerializationException
      */
-    protected TextDispatcherCommand serializeCommand(final DispatchCommand dispatchCommand) throws CommandSerializationException {
+    protected TextDispatcherCommand serializeCommand(final Command dispatchCommand) throws CommandSerializationException {
         LOGGER.debug("Serializing command before remote execution");
-        TextDispatcherCommand textDispatcherCommand = new TextDispatcherCommand(this.serializer.toText(dispatchCommand.getCommand()));
+        TextDispatcherCommand textDispatcherCommand = new TextDispatcherCommand(this.serializer.toText(dispatchCommand));
         textDispatcherCommand.getHeaders().putAll(dispatchCommand.getHeaders());
         return textDispatcherCommand;
     }

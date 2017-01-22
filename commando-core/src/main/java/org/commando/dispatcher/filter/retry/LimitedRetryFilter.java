@@ -1,10 +1,9 @@
 package org.commando.dispatcher.filter.retry;
 
-import org.commando.command.DispatchCommand;
+import org.commando.command.Command;
 import org.commando.dispatcher.filter.DispatchFilter;
 import org.commando.dispatcher.filter.DispatchFilterChain;
 import org.commando.exception.DispatchException;
-import org.commando.result.DispatchResult;
 import org.commando.result.Result;
 
 /**
@@ -19,10 +18,10 @@ public class LimitedRetryFilter implements DispatchFilter {
 	}
 
 	@Override
-	public DispatchResult<? extends Result> filter(DispatchCommand dispatchCommand, DispatchFilterChain filterChain)
+	public <C extends Command<R>, R extends Result> R filter(C dispatchCommand, DispatchFilterChain filterChain)
 			throws DispatchException {
-		if (dispatchCommand.getCommand() instanceof LimitedRetryCommand) {
-			LimitedRetryCommand command = (LimitedRetryCommand) dispatchCommand.getCommand();
+		if (dispatchCommand instanceof LimitedRetryCommand) {
+			LimitedRetryCommand command = (LimitedRetryCommand) dispatchCommand;
 			String key = command.getClass().getName() + "/" + command.getRetryKey();
 			int failedExecCount = retryCommandRepository.getFailedExecCount(key);
 			if (failedExecCount >=command.getMaxRetries()) {

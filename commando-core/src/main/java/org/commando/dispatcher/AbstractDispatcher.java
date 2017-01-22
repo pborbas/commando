@@ -3,14 +3,12 @@ package org.commando.dispatcher;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.commando.command.Command;
-import org.commando.command.DispatchCommand;
 import org.commando.dispatcher.filter.DefaultDispatchFilterChain;
 import org.commando.dispatcher.filter.DispatchFilter;
 import org.commando.dispatcher.filter.Executor;
 import org.commando.dispatcher.security.NoopSecurityContextManager;
 import org.commando.dispatcher.security.SecurityContextManager;
 import org.commando.exception.DispatchException;
-import org.commando.result.DispatchResult;
 import org.commando.result.Result;
 import org.commando.result.ResultFuture;
 
@@ -24,14 +22,14 @@ import java.util.concurrent.ForkJoinWorkerThread;
 /**
  * Common logic for all dispatcher implementations
  */
-public abstract class AbstractDispatcher implements Dispatcher, ChainableDispatcher {
+public abstract class AbstractDispatcher implements Dispatcher {
 
 	protected final Log LOGGER;
 
 	private ExecutorService executorService;
 	private final List<DispatchFilter> filters;
 	private Long timeout;
-	private SecurityContextManager securityContextManager=new NoopSecurityContextManager();
+	private SecurityContextManager securityContextManager = new NoopSecurityContextManager();
 
 	public AbstractDispatcher() {
 		this(new LinkedList<DispatchFilter>());
@@ -67,31 +65,23 @@ public abstract class AbstractDispatcher implements Dispatcher, ChainableDispatc
 	protected abstract Executor getExecutor();
 
 	@Override
-	public <C extends Command<R>, R extends Result> ResultFuture<R> dispatch(final C command) throws DispatchException {
-		return this.dispatch(new DispatchCommand(command));
-	}
-
-	@Override
-	public <C extends Command<R>, R extends Result> R dispatchSync(C command) throws DispatchException {
-		DispatchCommand dispatchCommand = new DispatchCommand(command);
+	public <C extends Command<R>, R extends Result> R dispatchSync(C dispatchCommand) throws DispatchException {
 		final ResultFuture<R> result = new ResultFuture<R>(this.getResultTimeout(dispatchCommand));
-		DispatchResult<Result> dispatchResult = this.executeCommonWorkflow(dispatchCommand, result);
-		return (R) dispatchResult.getResult();
+		return this.executeCommonWorkflow(dispatchCommand, result);
 	}
 
 	@Override
-	public <C extends Command<R>, R extends Result> ResultFuture<R> dispatch(final DispatchCommand dispatchCommand)
+	public <C extends Command<R>, R extends Result> ResultFuture<R> dispatch(final C dispatchCommand)
 			throws DispatchException {
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug(
-					"Passing command: " + dispatchCommand.getCommand().getClass().getName() + ". ID: " + dispatchCommand
-							.getCommand().getCommandId() + " to executor thread");
+			LOGGER.debug("Passing command: " + dispatchCommand.getClass().getName() + ". ID: " + dispatchCommand
+					.getCommandId() + " to executor thread");
 		}
 		final ResultFuture<R> result = new ResultFuture<R>(this.getResultTimeout(dispatchCommand));
-		final Object securityContextInfo=this.securityContextManager.getSecurityContext();
-		result.setWrappedFuture(this.executorService.submit(new Callable<DispatchResult<R>>() {
+		final Object securityContextInfo = this.securityContextManager.getSecurityContext();
+		result.setWrappedFuture(this.executorService.submit(new Callable<R>() {
 			@Override
-			public DispatchResult<R> call() throws Exception {
+			public R call() throws Exception {
 				try {
 					securityContextManager.setSecurityContext(securityContextInfo);
 					return AbstractDispatcher.this.executeCommonWorkflow(dispatchCommand, result);
@@ -106,12 +96,11 @@ public abstract class AbstractDispatcher implements Dispatcher, ChainableDispatc
 		return result;
 	}
 
-	protected void logException(Exception e, DispatchCommand dispatchCommand) {
-		LOGGER.error("Error while executing command: " + dispatchCommand.getCommand().getClass() + ": " + e,
-				e);
+	protected void logException(Exception e, Command dispatchCommand) {
+		LOGGER.error("Error while executing command: " + dispatchCommand.getClass() + ": " + e, e);
 	}
 
-	protected long getResultTimeout(final DispatchCommand dispatchCommand) {
+	protected long getResultTimeout(final Command dispatchCommand) {
 		String timeoutHeader = dispatchCommand.getHeader(HEADER_TIMEOUT);
 		Long receivedTimeout = (timeoutHeader != null) ? Long.valueOf(timeoutHeader) : null;
 		if (receivedTimeout != null && receivedTimeout < this.timeout) {
@@ -121,45 +110,42 @@ public abstract class AbstractDispatcher implements Dispatcher, ChainableDispatc
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <C extends Command<R>, R extends Result> DispatchResult<R> executeCommonWorkflow(
-			final DispatchCommand dispatchCommand, final DispatcherCallback callback) throws DispatchException {
-		LOGGER.debug("Execting command:" + dispatchCommand.getCommand().getCommandType() + ". ID:" + dispatchCommand
-				.getCommand().getCommandId());
+	public <C extends Command<R>, R extends Result> R executeCommonWorkflow(final C dispatchCommand,
+			final DispatcherCallback callback) throws DispatchException {
+		LOGGER.debug("Execting command:" + dispatchCommand.getCommandType() + ". ID:" + dispatchCommand.getCommandId());
 		long start = System.currentTimeMillis();
 		R result;
 		try {
 			this.addDefaultHeaders(dispatchCommand);
-			DispatchResult<R> dispatchResult = (DispatchResult<R>) new DefaultDispatchFilterChain(this.filters,
-					this.getExecutor()).filter(dispatchCommand);
-			result = dispatchResult.getResult();
-			result.setCommandId(dispatchCommand.getCommand().getCommandId());
+			result = new DefaultDispatchFilterChain(this.filters, this.getExecutor()).filter(dispatchCommand);
+			result.setCommandId(dispatchCommand.getCommandId());
 			String executionTime = new Long(System.currentTimeMillis() - start).toString();
-			this.addDefaultHeaders(dispatchResult, executionTime);
-			callback.onSuccess(dispatchCommand.getCommand(), result);
-			LOGGER.debug("Finished command:" + dispatchCommand.getCommand().getCommandType() + ". ID:" + dispatchCommand
-					.getCommand().getCommandId() + " (" + executionTime + "msec)");
-			return dispatchResult;
+			this.addDefaultHeaders(result, executionTime);
+			callback.onSuccess(dispatchCommand, result);
+			LOGGER.debug(
+					"Finished command:" + dispatchCommand.getCommandType() + ". ID:" + dispatchCommand.getCommandId()
+							+ " (" + executionTime + "msec)");
+			return result;
 		} catch (DispatchException e) {
-			callback.onError(dispatchCommand.getCommand(), e);
+			callback.onError(dispatchCommand, e);
 			throw e;
 		} catch (Throwable e) {
 			DispatchException dispatchException = new DispatchException("Unknown error while executing command:" + e,
 					e);
-			callback.onError(dispatchCommand.getCommand(), dispatchException);
+			callback.onError(dispatchCommand, dispatchException);
 			throw dispatchException;
 		}
 	}
 
-	protected void addDefaultHeaders(final DispatchCommand dispatchCommand) {
-		dispatchCommand.setHeader(HEADER_COMMAND_CLASS, dispatchCommand.getCommand().getCommandType().getName());
-		dispatchCommand.setHeader(HEADER_COMMAND_ID, dispatchCommand.getCommand().getCommandId());
+	protected void addDefaultHeaders(final Command dispatchCommand) {
+		dispatchCommand.setHeader(HEADER_COMMAND_CLASS, dispatchCommand.getCommandType().getName());
+		dispatchCommand.setHeader(HEADER_COMMAND_ID, dispatchCommand.getCommandId());
 		dispatchCommand.setHeader(HEADER_TIMEOUT, this.timeout.toString());
 	}
 
-	protected void addDefaultHeaders(final DispatchResult<? extends Result> dispatchResult,
-			final String executionTime) {
-		dispatchResult.setHeader(HEADER_RESULT_CLASS, dispatchResult.getResult().getClass().getName());
-		dispatchResult.setHeader(HEADER_COMMAND_ID, dispatchResult.getResult().getCommandId());
+	protected void addDefaultHeaders(final Result dispatchResult, final String executionTime) {
+		dispatchResult.setHeader(HEADER_RESULT_CLASS, dispatchResult.getClass().getName());
+		dispatchResult.setHeader(HEADER_COMMAND_ID, dispatchResult.getCommandId());
 		dispatchResult.setHeader(HEADER_COMMAND_EXECUTION_TIME, executionTime);
 	}
 

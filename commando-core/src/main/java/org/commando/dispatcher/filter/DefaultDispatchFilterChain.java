@@ -1,12 +1,11 @@
 package org.commando.dispatcher.filter;
 
+import org.commando.command.Command;
+import org.commando.exception.DispatchException;
+import org.commando.result.Result;
+
 import java.util.Iterator;
 import java.util.List;
-
-import org.commando.command.DispatchCommand;
-import org.commando.exception.DispatchException;
-import org.commando.result.DispatchResult;
-import org.commando.result.Result;
 
 public class DefaultDispatchFilterChain implements DispatchFilterChain {
 
@@ -20,7 +19,7 @@ public class DefaultDispatchFilterChain implements DispatchFilterChain {
 
     @SuppressWarnings("unchecked")
     @Override
-    public DispatchResult<? extends Result> filter(DispatchCommand dispatchCommand) throws DispatchException {
+	public <C extends Command<R>, R extends Result> R filter(C dispatchCommand) throws DispatchException {
         if (this.filters.hasNext()) {
             return this.filters.next().filter(dispatchCommand, this);
         }
