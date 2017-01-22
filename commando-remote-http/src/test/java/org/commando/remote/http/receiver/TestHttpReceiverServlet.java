@@ -18,22 +18,22 @@ package org.commando.remote.http.receiver;
 //========================================================================
 //
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-
 import org.commando.dispatcher.InVmDispatcher;
+import org.commando.json.serializer.JsonSerializer;
 import org.commando.remote.receiver.CommandReceiver;
 import org.commando.remote.receiver.DefaultCommandReceiver;
 import org.commando.remote.serializer.Serializer;
 import org.commando.testbase.dispatcher.TestDispatcherFactory;
-import org.commando.xml.serializer.XmlSerializer;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
 
 @SuppressWarnings("serial")
 public class TestHttpReceiverServlet extends AbstractHttpCommandReceiverServlet {
 
     @Override
     protected CommandReceiver initCommandReceiver(final ServletConfig config) throws ServletException {
-        Serializer serializer = new XmlSerializer();
+        Serializer serializer = new JsonSerializer();
         InVmDispatcher dispatcher = TestDispatcherFactory.createTestInVmDispatcher();
         DefaultCommandReceiver commandReceiver = new DefaultCommandReceiver(serializer, dispatcher);
         return commandReceiver;

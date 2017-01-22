@@ -4,15 +4,18 @@ import org.commando.command.Command;
 import org.commando.dispatcher.ChainableDispatcher;
 import org.commando.example.SampleCommand;
 import org.commando.exception.DispatchException;
+import org.commando.json.serializer.JsonSerializer;
 import org.commando.remote.dispatcher.filter.circuit.CircuitBreakerFilter;
 import org.commando.remote.dispatcher.filter.circuit.CircuiteBreakerException;
 import org.commando.remote.http.receiver.JettyUnitServlet;
 import org.commando.remote.http.receiver.TestHttpReceiverServlet;
 import org.commando.result.Result;
 import org.commando.testbase.test.AbstractDispatcherTest;
-import org.commando.xml.serializer.XmlSerializer;
 import org.eclipse.jetty.server.Server;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
@@ -23,7 +26,7 @@ public class RestHttpDispatcherTest extends AbstractDispatcherTest {
     final RestHttpDispatcher dispatcher;
 
     public RestHttpDispatcherTest() {
-        this.dispatcher = new RestHttpDispatcher("http://localhost:8123/", new XmlSerializer());
+        this.dispatcher = new RestHttpDispatcher("http://localhost:8123/", new JsonSerializer());
         this.dispatcher.setTimeout(1000);
     }
 
@@ -39,7 +42,7 @@ public class RestHttpDispatcherTest extends AbstractDispatcherTest {
     @Test(expected=CircuiteBreakerException.class)
     public void testCircuiteBreaker() throws DispatchException {
         //send to invalid port
-        RestHttpDispatcher dispatcher = new RestHttpDispatcher("http://localhost:9999/", new XmlSerializer());
+        RestHttpDispatcher dispatcher = new RestHttpDispatcher("http://localhost:9999/", new JsonSerializer());
         CircuitBreakerFilter circuitBreakerFilter = new CircuitBreakerFilter();
         circuitBreakerFilter.setErrorThreshold(2);
         circuitBreakerFilter.setOpenInterval(500);

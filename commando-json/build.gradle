@@ -1,0 +1,5 @@
+dependencies {
+    compile project(':commando-remote')
+    compile("com.fasterxml.jackson.core:jackson-databind:"+versionJackson)
+
+}

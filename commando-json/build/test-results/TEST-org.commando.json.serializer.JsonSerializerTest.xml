@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.commando.json.serializer.JsonSerializerTest" tests="3" skipped="1" failures="0" errors="0" timestamp="2017-01-22T12:51:40" hostname="pborbass-MacBook-Pro.local" time="0.241">
+  <properties/>
+  <testcase name="testCommandInheritanceSerialization" classname="org.commando.json.serializer.JsonSerializerTest" time="0.236"/>
+  <testcase name="testResultInheritanceSerialization" classname="org.commando.json.serializer.JsonSerializerTest" time="0.003"/>
+  <testcase name="testCommandInheritanceSerializationSpeed" classname="org.commando.json.serializer.JsonSerializerTest" time="0.0">
+    <skipped/>
+  </testcase>
+  <system-out><![CDATA[["org.commando.example.SampleCommand",{"commandId":"6cec8a89-bd01-49c7-93de-9ef2e002fb76","data":"Őűúépú"}]
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -7,8 +7,11 @@ package org.commando.result;
  * 
  */
 public class VoidResult extends AbstractResult implements Result {
+	public VoidResult() {
+		//for serialization
+	}
 
-    public VoidResult(final String commandId) {
+	public VoidResult(final String commandId) {
         super(commandId);
     }
 

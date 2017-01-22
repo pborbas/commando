@@ -1,6 +1,7 @@
 dependencies {
     compile project(':commando-core')
     compile project(':commando-xml')
+    compile project(':commando-json')
 
     compile group: 'org.springframework', name: 'spring-tx', version: springVersion
     compile group: 'org.springframework', name: 'spring-context', version: springVersion

@@ -7,6 +7,8 @@ public class TestWaitCommand extends AbstractCommand<VoidResult> {
     private static final long serialVersionUID = 1L;
     long waitTime;
 
+	private TestWaitCommand() {}
+
     public TestWaitCommand(final long waitTime) {
         super();
         this.waitTime = waitTime;

@@ -1,7 +1,6 @@
 dependencies {
     compile project(':commando-spring-remote')
     compile project(':commando-remote-http')
-    compile project(':commando-xml')
 
     compile group: 'org.springframework', name: 'spring-web', version: springVersion
     

@@ -1,6 +1,5 @@
 dependencies {
     compile project(':commando-spring-core')
-    compile project(':commando-xml')
     compile project(':commando-remote')
 
     testCompile  group: 'org.springframework', name: 'spring-test', version: springVersion

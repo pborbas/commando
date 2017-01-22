@@ -13,7 +13,11 @@ package org.commando.result;
 public abstract class AbstractSimpleResult<T> extends AbstractResult implements Result {
 
     private T value;    
-    
+
+	protected AbstractSimpleResult() {
+		super();
+	}
+
     protected AbstractSimpleResult(String commandId) {
         super(commandId);
     }

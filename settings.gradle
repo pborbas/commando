@@ -14,3 +14,5 @@ include "commando-springboot-actuator"
 include "commando-springboot-remote-http"
 include "commando-springboot-remote-jms"
 include "commando-test"
+include 'commando-json'
+

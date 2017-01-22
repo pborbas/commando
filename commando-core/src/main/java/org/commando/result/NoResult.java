@@ -8,7 +8,11 @@ package org.commando.result;
  */
 public class NoResult extends AbstractResult implements Result {
 
-    public NoResult(final String commandId) {
+	private NoResult() {
+		//for serialization
+	}
+
+	public NoResult(final String commandId) {
         super(commandId);
     }
 
