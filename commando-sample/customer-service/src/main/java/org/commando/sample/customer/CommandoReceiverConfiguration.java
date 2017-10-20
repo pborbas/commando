@@ -4,17 +4,16 @@ import org.commando.remote.http.receiver.DefaultHttpCommandReceiver;
 import org.commando.remote.http.receiver.HttpCommandReceiver;
 import org.commando.remote.serializer.Serializer;
 import org.commando.sample.customer.api.dispatcher.CustomerDispatcher;
-import org.commando.sample.customer.api.dispatcher.CustomerInVmDispatcher;
 import org.commando.spring.remote.http.config.AbstractHttpCommandDefaultReceiverConfiguration;
 import org.commando.xml.serializer.XmlSerializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- *
+ * Registers a receiver servlet that accepts commands through HTTP on the specified base URL and delegates them to the Dispatcher configured in @{@link CommandoDispatcherConfiguration}
  */
 @Configuration
-public class CommandoConfiguration extends AbstractHttpCommandDefaultReceiverConfiguration {
+public class CommandoReceiverConfiguration extends AbstractHttpCommandDefaultReceiverConfiguration {
 
 	@Bean
 	public Serializer serializer() {
@@ -22,13 +21,8 @@ public class CommandoConfiguration extends AbstractHttpCommandDefaultReceiverCon
 	}
 
 	@Bean
-	public CustomerDispatcher customerDispatcher() {
-		return new CustomerInVmDispatcher();
-	}
-
-	@Bean
-	public HttpCommandReceiver customerHttpCommandReceiver() {
-		return new DefaultHttpCommandReceiver(serializer(), customerDispatcher(), "/api/customer", "customerServlet");
+	public HttpCommandReceiver customerHttpCommandReceiver(CustomerDispatcher customerDispatcher) {
+		return new DefaultHttpCommandReceiver(serializer(), customerDispatcher, "/api/customer/*", "customerServlet");
 	}
 
 }

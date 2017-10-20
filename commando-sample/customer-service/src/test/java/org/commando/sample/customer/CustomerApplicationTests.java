@@ -5,7 +5,6 @@ import org.commando.remote.http.dispatcher.RestHttpDispatcher;
 import org.commando.remote.serializer.Serializer;
 import org.commando.sample.customer.api.command.CreateCustomerCommand;
 import org.commando.sample.customer.api.command.ListCustomersCommand;
-import org.commando.sample.customer.api.model.Customer;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +37,7 @@ public class CustomerApplicationTests {
 
     @Test
     public void testCreateCustomer() throws DispatchException {
-        dispatcher.dispatch(new CreateCustomerCommand(new Customer(1, "test1"))).getResult();
+        dispatcher.dispatch(new CreateCustomerCommand("test1")).getResult();
         Assert.assertEquals(1, dispatcher.dispatch(new ListCustomersCommand()).getResult().getCustomers().size());
     }
 

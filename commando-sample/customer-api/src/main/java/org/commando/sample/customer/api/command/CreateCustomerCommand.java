@@ -1,18 +1,16 @@
 package org.commando.sample.customer.api.command;
 
 import org.commando.command.AbstractCommand;
-import org.commando.result.LongResult;
-import org.commando.sample.customer.api.model.Customer;
 
-public class CreateCustomerCommand extends AbstractCommand<LongResult>{
+public class CreateCustomerCommand extends AbstractCommand<CustomerResult>{
 
-    private final Customer customer;
+    private final String name;
 
-    public CreateCustomerCommand(final Customer customer) {
-        this.customer=customer;
-    }
+	public CreateCustomerCommand(String name) {
+		this.name = name;
+	}
 
-    public Customer getCustomer() {
-        return this.customer;
-    }
+	public String getName() {
+		return name;
+	}
 }

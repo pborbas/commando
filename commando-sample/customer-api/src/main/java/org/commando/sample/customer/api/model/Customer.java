@@ -11,10 +11,14 @@ public class Customer {
 
     String name;
 
-    public Customer() {
+    private Customer() {
     }
 
-    public Customer(final long id, final String name) {
+	public Customer(String name) {
+		this.name = name;
+	}
+
+	public Customer(final long id, final String name) {
         this.name=name;
         this.id=id;
     }

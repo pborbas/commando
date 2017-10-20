@@ -11,10 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 @DispatchAction
 public class ListCustomersAction extends AbstractAction<ListCustomersCommand, ListCustomersResult>{
 
-    @Autowired
-    CustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
 
-    @Override
+    @Autowired
+	public ListCustomersAction(CustomerRepository customerRepository) {
+		this.customerRepository = customerRepository;
+	}
+
+	@Override
     public ListCustomersResult execute(final ListCustomersCommand listCustomersCommand) throws DispatchException {
         return new ListCustomersResult(listCustomersCommand.getCommandId(), this.customerRepository.findAll());
     }
