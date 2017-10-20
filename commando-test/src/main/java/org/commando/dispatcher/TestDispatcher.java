@@ -1,24 +1,20 @@
 package org.commando.dispatcher;
 
 import org.commando.command.Command;
-import org.commando.command.DispatchCommand;
 import org.commando.exception.DispatchException;
 import org.commando.result.Result;
 import org.commando.result.ResultFuture;
 import org.junit.Assert;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by pborbas on 21/05/15.
  */
-public class TestDispatcher implements ChainableDispatcher {
-
-	@Override
-	public <C extends Command<R>, R extends Result> ResultFuture<R> dispatch(DispatchCommand dispatchCommand)
-			throws DispatchException {
-		throw new UnsupportedOperationException("Not yet implemented for tests");
-	}
+public class TestDispatcher implements Dispatcher {
 
 	public interface ResultSelector<C extends Command<R>, R extends Result> {
 		boolean isResultFor(C command);

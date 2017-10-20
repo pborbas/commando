@@ -1,9 +1,10 @@
 package org.commando.command;
 
-import java.io.Serializable;
-
 import org.commando.dispatcher.Dispatcher;
 import org.commando.result.Result;
+
+import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Represents a command sent to the {@link Dispatcher}. It has a specific
@@ -30,5 +31,12 @@ public interface Command<R extends Result> extends Serializable {
      * Unique command Id
      */
     String getCommandId();
+
+	public String getHeader(final String headerName);
+
+	public void setHeader(final String headerName, final String value);
+
+	public Map<String, String> getHeaders();
+
 
 }

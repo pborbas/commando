@@ -2,7 +2,7 @@ package org.commando.testbase.test;
 
 import org.commando.action.Action;
 import org.commando.command.AbstractCommand;
-import org.commando.dispatcher.ChainableDispatcher;
+import org.commando.dispatcher.Dispatcher;
 import org.commando.dispatcher.InVmDispatcher;
 import org.commando.dispatcher.filter.retry.DefaultRetryPolicy;
 import org.commando.dispatcher.filter.retry.RetryFilter;
@@ -18,7 +18,7 @@ public class InVmDispatcherTest extends AbstractDispatcherTest {
     private final InVmDispatcher dispatcher = TestDispatcherFactory.createTestInVmDispatcher();
 
     @Override
-    protected ChainableDispatcher getDispatcher() {
+    protected Dispatcher getDispatcher() {
 	return this.dispatcher;
     }
 

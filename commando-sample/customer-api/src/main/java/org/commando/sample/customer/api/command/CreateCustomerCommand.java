@@ -1,8 +1,8 @@
-package org.commando.sample.customer.api;
+package org.commando.sample.customer.api.command;
 
 import org.commando.command.AbstractCommand;
 import org.commando.result.LongResult;
-import org.commando.sample.customer.model.Customer;
+import org.commando.sample.customer.api.model.Customer;
 
 public class CreateCustomerCommand extends AbstractCommand<LongResult>{
 

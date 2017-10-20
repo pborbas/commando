@@ -1,12 +1,11 @@
 package org.commando.remote.model;
 
-import org.commando.command.DispatchCommand;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Serialized version of a {@link DispatchCommand}
+ * Serialized version of a {@link org.commando.command.Command}
  * 
  * @author pborbas
  *

@@ -1,10 +1,9 @@
 package org.commando.dispatcher.filter.metrics;
 
-import org.commando.command.DispatchCommand;
+import org.commando.command.Command;
 import org.commando.dispatcher.filter.DispatchFilter;
 import org.commando.dispatcher.filter.DispatchFilterChain;
 import org.commando.exception.DispatchException;
-import org.commando.result.DispatchResult;
 import org.commando.result.Result;
 
 import java.util.HashMap;
@@ -63,10 +62,9 @@ public class MetricsFilter implements DispatchFilter {
 	private final Map<Class, Metric> metrics=new HashMap<>();
 
 	@Override
-	public DispatchResult<? extends Result> filter(DispatchCommand dispatchCommand, DispatchFilterChain filterChain)
-			throws DispatchException {
-		DispatchResult<? extends Result> dispatchResult = null;
-		Class commandType=dispatchCommand.getCommand().getCommandType();
+	public <C extends Command<R>, R extends Result>  R filter(C dispatchCommand, DispatchFilterChain filterChain) throws DispatchException {
+		R dispatchResult = null;
+		Class commandType=dispatchCommand.getCommandType();
 		try {
 			long start= System.currentTimeMillis();
 			dispatchResult = filterChain.filter(dispatchCommand);

@@ -1,14 +1,17 @@
 package org.commando.command;
 
-import java.util.UUID;
-
 import org.commando.result.Result;
+
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.UUID;
 
 public abstract class AbstractCommand<R extends Result> implements Command<R> {
 
 	private static final long serialVersionUID = 1L;
 
 	private final String commandId;
+	private final Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
 	public AbstractCommand() {
 		this.commandId = UUID.randomUUID().toString();
@@ -30,7 +33,19 @@ public abstract class AbstractCommand<R extends Result> implements Command<R> {
 	public Class<?> getCommandType() {
 	    return this.getClass();
 	}
-	
+
+	public String getHeader(final String headerName) {
+		return this.headers.get(headerName);
+	}
+
+	public void setHeader(final String headerName, final String value) {
+		this.headers.put(headerName, value);
+	}
+
+	public Map<String, String> getHeaders() {
+		return this.headers;
+	}
+
 	@Override
 	public int hashCode() {
 		return this.getClass().getName().hashCode();

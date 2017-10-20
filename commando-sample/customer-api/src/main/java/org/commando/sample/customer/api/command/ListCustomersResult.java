@@ -1,9 +1,9 @@
-package org.commando.sample.customer.api;
-
-import java.util.List;
+package org.commando.sample.customer.api.command;
 
 import org.commando.result.AbstractResult;
-import org.commando.sample.customer.model.Customer;
+import org.commando.sample.customer.api.model.Customer;
+
+import java.util.List;
 
 public class ListCustomersResult extends AbstractResult {
 

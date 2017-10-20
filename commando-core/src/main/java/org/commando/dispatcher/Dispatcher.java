@@ -29,5 +29,6 @@ public interface Dispatcher {
      */
     <C extends Command<R>, R extends Result> ResultFuture<R> dispatch(C command) throws DispatchException;
 	<C extends Command<R>, R extends Result>  R dispatchSync(C command) throws DispatchException;
+	long getTimeout();
 
 }

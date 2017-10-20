@@ -1,6 +1,6 @@
 package org.commando.spring.remote.config;
 
-import org.commando.dispatcher.ChainableDispatcher;
+import org.commando.dispatcher.Dispatcher;
 import org.commando.remote.receiver.CommandReceiver;
 import org.commando.remote.receiver.DefaultCommandReceiver;
 import org.commando.remote.serializer.Serializer;
@@ -29,7 +29,7 @@ public abstract class AbstractDefaultReceiverConfiguration {
     }
 
     @Bean
-    public ChainableDispatcher dispatcher() {
+    public Dispatcher dispatcher() {
         SpringInVmDispatcher dispatcher = new SpringInVmDispatcher();
         dispatcher.setExecutorService(executor());
         return dispatcher;

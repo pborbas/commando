@@ -2,12 +2,11 @@ package org.commando.remote.dispatcher.filter.circuit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.commando.command.DispatchCommand;
+import org.commando.command.Command;
 import org.commando.dispatcher.filter.DispatchFilter;
 import org.commando.dispatcher.filter.DispatchFilterChain;
 import org.commando.exception.DispatchException;
 import org.commando.remote.exception.RemoteDispatchException;
-import org.commando.result.DispatchResult;
 import org.commando.result.Result;
 /**
  * Circuite breaker implementation
@@ -28,10 +27,10 @@ public class CircuitBreakerFilter implements DispatchFilter {
     private long halfOpenIntervall = 5000;
 
     @Override
-    public DispatchResult<? extends Result> filter(final DispatchCommand dispatchCommand, final DispatchFilterChain filterChain) throws DispatchException {
+    public <C extends Command<R>, R extends Result>  R filter(C dispatchCommand, DispatchFilterChain filterChain) throws DispatchException{
         if (this.executionAllowed()) {
             try {
-                final DispatchResult<? extends Result> result = filterChain.filter(dispatchCommand);
+                R result = filterChain.filter(dispatchCommand);
                 this.bookSuccess();
                 return result;
             } catch (RemoteDispatchException e) {

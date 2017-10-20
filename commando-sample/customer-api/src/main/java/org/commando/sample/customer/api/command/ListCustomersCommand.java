@@ -1,4 +1,4 @@
-package org.commando.sample.customer.api;
+package org.commando.sample.customer.api.command;
 
 import org.commando.command.AbstractCommand;
 

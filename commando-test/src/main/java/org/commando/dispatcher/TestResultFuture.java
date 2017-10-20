@@ -1,7 +1,6 @@
 package org.commando.dispatcher;
 
 import org.commando.exception.DispatchException;
-import org.commando.result.DispatchResult;
 import org.commando.result.Result;
 import org.commando.result.ResultFuture;
 
@@ -43,13 +42,4 @@ public class TestResultFuture<R extends Result> extends ResultFuture<R> {
 		return result;
 	}
 
-	@Override
-	public DispatchResult<R> getDispatchResult() throws DispatchException {
-		throw new UnsupportedOperationException("Not yet implemented for tests");
-	}
-
-	@Override
-	public DispatchResult<R> getDispatchResult(long timeout, TimeUnit unit) throws DispatchException {
-		throw new UnsupportedOperationException("Not yet implemented for tests");
-	}
 }

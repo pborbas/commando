@@ -1,20 +1,11 @@
 package org.commando.testbase.test;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import org.commando.dispatcher.ChainableDispatcher;
+import org.commando.dispatcher.Dispatcher;
 import org.commando.example.SampleCommand;
 import org.commando.example.SampleResult;
 import org.commando.exception.AsyncTimeoutException;
 import org.commando.exception.DispatchException;
-import org.commando.result.DispatchResult;
-import org.commando.result.NoResult;
-import org.commando.result.Result;
-import org.commando.result.ResultCallback;
-import org.commando.result.ResultFuture;
-import org.commando.result.VoidResult;
+import org.commando.result.*;
 import org.commando.testbase.command.NoResultCommand;
 import org.commando.testbase.command.TestFailCommand;
 import org.commando.testbase.command.TestWaitCommand;
@@ -23,6 +14,10 @@ import org.commando.testbase.filter.TestFilter;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public abstract class AbstractDispatcherTest {
 
@@ -44,7 +39,7 @@ public abstract class AbstractDispatcherTest {
     public void testResultContainsRemoteFilterHeaders() throws DispatchException, InterruptedException, ExecutionException, TimeoutException {
         SampleCommand command = new SampleCommand();
         ResultFuture<SampleResult> futureResult = this.getDispatcher().dispatch(command);
-        DispatchResult<? extends Result> result = futureResult.getDispatchResult(5, TimeUnit.SECONDS);
+        Result result = futureResult.getResult(5, TimeUnit.SECONDS);
         // Header value is added on the remote side in TestFilter
         Assert.assertEquals(TestFilter.HEADER_VALUE, result.getHeader(TestFilter.HEADER_TEST_FILTER));
     }
@@ -91,5 +86,5 @@ public abstract class AbstractDispatcherTest {
 	Mockito.verify(resultCallback).onError(dispatchException);
     }
 
-    protected abstract ChainableDispatcher getDispatcher();
+    protected abstract Dispatcher getDispatcher();
 }

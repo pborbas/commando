@@ -1,6 +1,6 @@
 package org.commando.remote.jms.dispatch;
 
-import org.commando.dispatcher.ChainableDispatcher;
+import org.commando.dispatcher.Dispatcher;
 import org.commando.testbase.test.AbstractDispatcherTest;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ public class JmsDispatcherTest extends AbstractDispatcherTest {
     JmsDispatcher dispatcher;
 
     @Override
-    protected ChainableDispatcher getDispatcher() {
+    protected Dispatcher getDispatcher() {
         return this.dispatcher;
     }
 

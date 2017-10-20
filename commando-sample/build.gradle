@@ -30,7 +30,7 @@ eclipse {
        	testCompile 'junit:junit:4.11'
     }
 
-    group = 'org.commando.sample'
+    group = 'io.github.pborbas.commando'
     version = '1.0-SNAPSHOT'
 
     jar {

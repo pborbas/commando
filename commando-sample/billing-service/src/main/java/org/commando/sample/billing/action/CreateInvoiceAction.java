@@ -8,7 +8,7 @@ import org.commando.result.NoResult;
 import org.commando.sample.billing.api.CreateInvoiceCommand;
 import org.commando.sample.billing.model.Invoice;
 import org.commando.sample.billing.repo.InvoiceRepository;
-import org.commando.spring.action.DispatchAction;
+import org.commando.spring.core.action.DispatchAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 

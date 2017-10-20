@@ -4,10 +4,10 @@ import org.commando.dispatcher.Dispatcher;
 import org.commando.exception.DispatchException;
 import org.commando.remote.jms.dispatch.JmsDispatcher;
 import org.commando.remote.jms.dispatch.JmsTemplate;
+import org.commando.remote.serializer.Serializer;
 import org.commando.sample.billing.BillingApplication;
 import org.commando.sample.billing.api.CreateInvoiceCommand;
 import org.commando.sample.billing.model.Invoice;
-import org.commando.serializer.Serializer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +23,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 public class BillingApplicationTests {
 
     @Autowired
-    Serializer serializer;
+	Serializer serializer;
     @Autowired
     @Qualifier("commandJmsTemplate")
     JmsTemplate commandJmsTemplate;

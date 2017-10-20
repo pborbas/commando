@@ -1,4 +1,4 @@
-package org.commando.sample.customer.model;
+package org.commando.sample.customer.api.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

@@ -2,11 +2,10 @@ package org.commando.sample.customer;
 
 import org.commando.exception.DispatchException;
 import org.commando.remote.http.dispatcher.RestHttpDispatcher;
-import org.commando.sample.customer.CustomerApplication;
-import org.commando.sample.customer.api.CreateCustomerCommand;
-import org.commando.sample.customer.api.ListCustomersCommand;
-import org.commando.sample.customer.model.Customer;
-import org.commando.serializer.Serializer;
+import org.commando.remote.serializer.Serializer;
+import org.commando.sample.customer.api.command.CreateCustomerCommand;
+import org.commando.sample.customer.api.command.ListCustomersCommand;
+import org.commando.sample.customer.api.model.Customer;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +23,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 public class CustomerApplicationTests {
 
     @Autowired
-    Serializer serializer;
+	Serializer serializer;
     RestHttpDispatcher dispatcher;
 
     @Before
