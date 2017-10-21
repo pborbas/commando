@@ -1,7 +1,7 @@
 dependencies {
-    compile("io.github.pborbas.commando:commando-core:1.0.0-SNAPSHOT")
-    compile("io.github.pborbas.commando:commando-remote-http:1.0.0-SNAPSHOT")
-    compile("io.github.pborbas.commando:commando-spring-core:1.0.0-SNAPSHOT")
+    compile("io.github.pborbas.commando:commando-core:"+commandoVersion)
+    compile("io.github.pborbas.commando:commando-remote-http:"+commandoVersion)
+    compile("io.github.pborbas.commando:commando-spring-core:"+commandoVersion)
     compile 'org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final'
 }
 

@@ -4,7 +4,7 @@ dependencies {
 
     compile("org.springframework:spring-jms:"+springVersion)
     
-    provided 'org.apache.activemq:activemq-all:'+activemqVersion
+//    provided 'org.apache.activemq:activemq-all:'+activemqVersion
     
     testCompile  group: 'org.springframework', name: 'spring-test', version: springVersion
 

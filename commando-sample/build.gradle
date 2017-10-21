@@ -26,12 +26,12 @@ eclipse {
 
     dependencies {
      	compile 'commons-logging:commons-logging:1.2+'
-      	testCompile 'log4j:log4j:1.2.+'
+//      	testCompile 'log4j:log4j:1.2.+'
        	testCompile 'junit:junit:4.11'
     }
 
     group = 'io.github.pborbas.commando'
-    version = '1.0-SNAPSHOT'
+    version = commandoVersion
 
     jar {
         manifest.attributes provider: 'Peter Borbas'

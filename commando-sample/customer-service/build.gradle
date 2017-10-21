@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '1.2.8.RELEASE'
+        springBootVersion = springBootVersion
     }
     repositories {
         mavenLocal()
@@ -19,8 +19,8 @@ apply plugin: 'spring-boot'
 dependencies {
     compile project(":customer-api")
 
-    compile("io.github.pborbas.commando:commando-xml:1.0.0-SNAPSHOT")
-    compile("io.github.pborbas.commando:commando-springboot-remote-http:1.0.0-SNAPSHOT")
+    compile("io.github.pborbas.commando:commando-xml:"+commandoVersion)
+    compile("io.github.pborbas.commando:commando-springboot-remote-http:"+commandoVersion)
 
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.boot:spring-boot-starter-data-jpa")

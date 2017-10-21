@@ -11,16 +11,16 @@ import org.springframework.context.annotation.Configuration;
  * Configures the dispatchers of the module
  */
 @Configuration
-public class CommandoDispatcherConfiguration {
+public class CommandoCustomerDispatcherConfiguration {
 
 	@Bean
-	public Serializer serializer() {
+	public Serializer customerSerializer() {
 		return new XmlSerializer();
 	}
 
 	@Bean
 	public CustomerDispatcher customerDispatcher() {
-		return new CustomerHttpDispatcher("http://localhost:8881/api/customer", serializer());
+		return new CustomerHttpDispatcher("http://localhost:8881/api/customer", customerSerializer());
 	}
 
 }
