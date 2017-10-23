@@ -18,7 +18,7 @@ apply plugin: 'spring-boot'
 
 dependencies {
     compile project(":customer-api")
-    compile project(":billing-api")
+    compile project(":product-api")
     compile("org.springframework.boot:spring-boot-starter-web")
 
     testCompile("org.springframework.boot:spring-boot-starter-test")

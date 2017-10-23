@@ -1,0 +1,1 @@
+docker run --name='activemq' -it --rm -p 61616:61616 -P  webcenter/activemq:latest

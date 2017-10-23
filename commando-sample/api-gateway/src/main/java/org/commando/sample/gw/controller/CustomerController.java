@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
+@RequestMapping("/customers")
 public class CustomerController {
 
     private final CustomerDispatcher customerDispatcher;
@@ -23,12 +24,12 @@ public class CustomerController {
 		this.customerDispatcher = customerDispatcher;
 	}
 
-	@RequestMapping(value = "/customers", method = RequestMethod.GET)
+	@RequestMapping(method = RequestMethod.GET)
     public List<Customer> listCustomers() throws DispatchException {
         return this.customerDispatcher.dispatchSync(new ListCustomersCommand()).getCustomers();
     }
 
-    @RequestMapping(value = "/customers", method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     public Customer createCustomer(@RequestParam final String name) throws DispatchException {
         return this.customerDispatcher.dispatchSync(new CreateCustomerCommand(name)).getValue();
     }

@@ -1,3 +1,3 @@
-include "customer-api","customer-service","billing-api","billing-service"
+include "customer-api","customer-service","product-api","product-service"
 include 'api-gateway'
 

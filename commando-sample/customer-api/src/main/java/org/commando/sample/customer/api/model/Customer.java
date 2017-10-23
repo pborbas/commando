@@ -7,7 +7,7 @@ import javax.persistence.Id;
 public class Customer {
 
     @Id
-    Long id;
+    Long customerId;
 
     String name;
 
@@ -18,17 +18,17 @@ public class Customer {
 		this.name = name;
 	}
 
-	public Customer(final long id, final String name) {
+	public Customer(final long customerId, final String name) {
         this.name=name;
-        this.id=id;
+        this.customerId = customerId;
     }
 
-    public Long getId() {
-        return this.id;
+    public Long getCustomerId() {
+        return this.customerId;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    public void setCustomerId(final Long customerId) {
+        this.customerId = customerId;
     }
 
     public String getName() {

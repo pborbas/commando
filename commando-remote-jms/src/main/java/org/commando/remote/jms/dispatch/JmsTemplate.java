@@ -1,15 +1,7 @@
 package org.commando.remote.jms.dispatch;
 
+import javax.jms.*;
 import java.util.concurrent.locks.ReentrantLock;
-
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
 
 public class JmsTemplate {
     private final ConnectionFactory connectionFactory;
@@ -73,7 +65,9 @@ public class JmsTemplate {
     }
 
     protected Connection createConnection() throws JMSException {
-        return connectionFactory.createConnection();
+		Connection connection = connectionFactory.createConnection();
+		connection.start();
+		return connection;
     }
 
     protected void closeConnection(final Connection connection) throws JMSException {
