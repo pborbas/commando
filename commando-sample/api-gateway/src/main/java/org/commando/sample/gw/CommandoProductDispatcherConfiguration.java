@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.jms.ConnectionFactory;
+import javax.jms.DeliveryMode;
 
 /**
  * Configures the dispatcher of the module
@@ -25,6 +26,7 @@ public class CommandoProductDispatcherConfiguration {
 	public ProductJmsDispatcher productDispatcher(ConnectionFactory connectionFactory) {
 		ActiveMQQueue commandQueue = new ActiveMQQueue("COMMAND.QUEUE");
 		JmsTemplate commandJmsTemplate = new JmsTemplate(connectionFactory, commandQueue);
+		commandJmsTemplate.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
 		ActiveMQQueue resultQueue = new ActiveMQQueue("RESULT.QUEUE");
 		JmsTemplate resultJmsTemplate = new JmsTemplate(connectionFactory, resultQueue);
 		return new ProductJmsDispatcher(commandJmsTemplate, resultJmsTemplate, productSerializer());

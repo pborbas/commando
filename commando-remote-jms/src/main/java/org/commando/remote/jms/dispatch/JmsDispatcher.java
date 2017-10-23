@@ -1,12 +1,5 @@
 package org.commando.remote.jms.dispatch;
 
-import java.util.Enumeration;
-
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.Session;
-import javax.jms.TextMessage;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.commando.command.Command;
@@ -17,6 +10,12 @@ import org.commando.remote.model.TextDispatcherResult;
 import org.commando.remote.serializer.Serializer;
 import org.commando.result.Result;
 import org.commando.util.CommandUtil;
+
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+import java.util.Enumeration;
 
 public class JmsDispatcher extends AbstractRemoteDispatcher {
 
@@ -54,7 +53,7 @@ public class JmsDispatcher extends AbstractRemoteDispatcher {
                 return new TextDispatcherResult(command.getCommandId(), null);
             } else {
                 LOGGER.debug("Command sent through JMS. Waiting for result. Command ID:" + command.getCommandId());
-                TextMessage jmsResultMessage = this.resultJmsTemplate.receive("JMSCorrelationID='" + command.getCommandId() + "'", TextMessage.class, timeout);
+                TextMessage jmsResultMessage = this.resultJmsTemplate.receive("JMSCorrelationID='" + command.getCommandId() + "'", timeout);
                 LOGGER.debug("Result received. Command ID:" + command.getCommandId());
                 String textResult = jmsResultMessage.getText();
                 TextDispatcherResult resultMessage = new TextDispatcherResult(command.getCommandId(), textResult);

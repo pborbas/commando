@@ -4,5 +4,6 @@ dependencies {
     compile("io.github.pborbas.commando:commando-remote-jms:"+commandoVersion)
     compile 'org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final'
     compile("org.apache.activemq:activemq-client:5.15.1")
+    compile("org.apache.activemq:activemq-pool:5.15.1")
 }
 

@@ -4,12 +4,12 @@ import org.commando.exception.DispatchException;
 import org.commando.result.ResultFuture;
 import org.commando.sample.customer.api.command.CustomerResult;
 import org.commando.sample.customer.api.command.GetCustomerCommand;
+import org.commando.sample.customer.api.dispatcher.CustomerDispatcher;
 import org.commando.sample.customer.api.model.Customer;
 import org.commando.sample.gw.resource.PurchaseResource;
 import org.commando.sample.product.api.GetProductCommand;
 import org.commando.sample.product.api.ProductResult;
 import org.commando.sample.product.dispatcher.ProductDispatcher;
-import org.commando.sample.customer.api.dispatcher.CustomerDispatcher;
 import org.commando.sample.product.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 import java.util.concurrent.TimeUnit;
 
 @RestController
-@RequestMapping("/purchase")
+@RequestMapping("/purchases")
 public class PurchaseController {
 
     private final CustomerDispatcher customerDispatcher;
@@ -34,7 +34,7 @@ public class PurchaseController {
 	}
 
 	/**
-	 * curl -X POST -H "Content-Type: application/json" -d '{"customer" : {"customerId":1}, "product" : {"productId":1}, "quantity" : 2}' "http://localhost:8080/purchase"
+	 * curl -X POST -H "Content-Type: application/json" -d '{"customer" : {"customerId":1}, "product" : {"productId":1}, "quantity" : 2}' "http://localhost:8880/purchases"
 	 */
 
 	@RequestMapping(method = RequestMethod.POST)
