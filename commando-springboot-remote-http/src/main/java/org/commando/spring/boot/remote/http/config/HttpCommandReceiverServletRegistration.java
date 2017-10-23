@@ -1,4 +1,4 @@
-package org.commando.spring.remote.http.config;
+package org.commando.spring.boot.remote.http.config;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

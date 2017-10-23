@@ -4,7 +4,7 @@ import org.commando.remote.http.receiver.DefaultHttpCommandReceiver;
 import org.commando.remote.http.receiver.HttpCommandReceiver;
 import org.commando.remote.serializer.Serializer;
 import org.commando.sample.customer.api.dispatcher.CustomerDispatcher;
-import org.commando.spring.remote.http.config.HttpCommandReceiverServletRegistration;
+import org.commando.spring.boot.remote.http.config.HttpCommandReceiverServletRegistration;
 import org.commando.xml.serializer.XmlSerializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
