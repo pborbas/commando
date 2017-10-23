@@ -16,6 +16,16 @@ public class Product {
     BigDecimal price;
     Integer stock;
 
+	public Product() {
+	}
+
+	public Product(Long productId, String title, BigDecimal price, Integer stock) {
+		this.productId = productId;
+		this.title = title;
+		this.price = price;
+		this.stock = stock;
+	}
+
 	public Long getProductId() {
 		return productId;
 	}

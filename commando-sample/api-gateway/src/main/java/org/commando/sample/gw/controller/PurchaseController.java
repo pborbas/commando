@@ -34,7 +34,7 @@ public class PurchaseController {
 	}
 
 	/**
-	 * curl -X POST -H "Content-Type: application/json" -d '{"customer" : {"customerId":1}, "product" : {"productId":1}}' "http://localhost:8080/purchase"
+	 * curl -X POST -H "Content-Type: application/json" -d '{"customer" : {"customerId":1}, "product" : {"productId":1}, "quantity" : 2}' "http://localhost:8080/purchase"
 	 */
 
 	@RequestMapping(method = RequestMethod.POST)
@@ -46,7 +46,6 @@ public class PurchaseController {
 
 		Customer customer = customerFuture.getResult().getValue();
 		Product product = productFuture.getResult(2, TimeUnit.MINUTES).getValue();
-		//TODO: store purchase
 		purchaseResource.setCustomer(customer);
 		purchaseResource.setProduct(product);
 		purchaseResource.setPrice(product.getPrice().multiply(BigDecimal.valueOf(purchaseResource.getQuantity())));

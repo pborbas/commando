@@ -4,6 +4,7 @@ import org.commando.action.AbstractAction;
 import org.commando.exception.DispatchException;
 import org.commando.sample.customer.api.command.CustomerResult;
 import org.commando.sample.customer.api.command.GetCustomerCommand;
+import org.commando.sample.customer.api.model.Customer;
 import org.commando.sample.customer.repo.CustomerRepository;
 import org.commando.spring.core.action.DispatchAction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,8 @@ public class GetCustomerAction extends AbstractAction<GetCustomerCommand, Custom
 
 	@Override
 	public CustomerResult execute(GetCustomerCommand command) throws DispatchException {
-		return new CustomerResult(command.getCommandId(), this.customerRepository.findOne(command.getCustomerId()));
+		Customer customer = new Customer(command.getCustomerId(), "John Smith");
+//		Customer customer = this.customerRepository.findOne(command.getCustomerId());
+		return new CustomerResult(command.getCommandId(), customer);
 	}
 }

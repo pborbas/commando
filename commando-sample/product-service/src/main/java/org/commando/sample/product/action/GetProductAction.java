@@ -12,6 +12,8 @@ import org.commando.spring.core.action.DispatchAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+
 @DispatchAction
 public class GetProductAction extends AbstractAction<GetProductCommand, ProductResult> {
 
@@ -28,7 +30,8 @@ public class GetProductAction extends AbstractAction<GetProductCommand, ProductR
 	@Override
 	@Transactional
 	public ProductResult execute(final GetProductCommand getProductCommand) throws DispatchException {
-		Product product = productRepository.findOne(getProductCommand.getProductId());
+		Product product = new Product(getProductCommand.getProductId(), "Microservices with Commando", BigDecimal.TEN, 5);
+//		Product product = productRepository.findOne(getProductCommand.getProductId());
 		return new ProductResult(getProductCommand.getCommandId(), product);
 	}
 
