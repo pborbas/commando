@@ -48,7 +48,7 @@ public abstract class AbstractHttpCommandReceiverServlet extends HttpServlet {
     }
 
     protected void process(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        try {
+    	try {
             TextDispatcherCommand textDispatcherCommand = this.parseRequest(req);
 			LOGGER.debug("Command received: " + textDispatcherCommand.toString(LOGGER.isDebugEnabled()));
             TextDispatcherResult textDispatcherResult = this.commandReceiver.execute(textDispatcherCommand);
