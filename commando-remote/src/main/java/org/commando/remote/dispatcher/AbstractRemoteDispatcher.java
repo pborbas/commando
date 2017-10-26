@@ -22,7 +22,7 @@ public abstract class AbstractRemoteDispatcher extends AbstractDispatcher implem
 
     private static final Log LOGGER = LogFactory.getLog(AbstractRemoteDispatcher.class);
 
-    private final Serializer serializer;
+    protected final Serializer serializer;
 
     public AbstractRemoteDispatcher(final Serializer serializer) {
         super();

@@ -40,6 +40,16 @@ public class JsonSerializer implements Serializer {
 	}
 
 	@Override
+	public String getContentType() {
+		return "application/json";
+	}
+
+	@Override
+	public String getCharset() {
+		return "UTF-8";
+	}
+
+	@Override
 	public String toText(Result result) throws CommandSerializationException {
 		return convertToText(result);
 	}

@@ -18,4 +18,7 @@ public interface Serializer {
     Command<?> toCommand(String textCommand) throws CommandSerializationException;
 
     Result toResult(String textResult) throws CommandSerializationException;
+
+    String getContentType();
+    String getCharset();
 }

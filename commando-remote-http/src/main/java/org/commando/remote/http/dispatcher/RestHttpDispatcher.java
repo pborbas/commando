@@ -39,7 +39,6 @@ public class RestHttpDispatcher extends AbstractRemoteDispatcher implements Remo
 
 	private final CloseableHttpClient httpclient;
 	private final String targetUrl;
-	private ContentType contentType=ContentType.APPLICATION_JSON;
 
 	public RestHttpDispatcher(final String targetUrl, final Serializer serializer) {
 		this(HttpClients.createDefault(), serializer, targetUrl);
@@ -77,6 +76,7 @@ public class RestHttpDispatcher extends AbstractRemoteDispatcher implements Remo
 		HttpRequestBase request;
 		String requestPath = this.createHttpPath(command);
 		request = new HttpPost(requestPath);
+		ContentType contentType=ContentType.create(this.serializer.getContentType(), this.serializer.getCharset());
 		request.setHeader(HttpHeaders.CONTENT_TYPE, contentType.toString());
 		((HttpPost) request).setEntity(new StringEntity(commandMessage.getTextCommand(), contentType));
 		for (String headerKey : commandMessage.getHeaders().keySet()) {
@@ -118,7 +118,7 @@ public class RestHttpDispatcher extends AbstractRemoteDispatcher implements Remo
 		HttpEntity entity = httpResponse.getEntity();
 		String responseBody;
 		try {
-			responseBody = EntityUtils.toString(entity, this.contentType.getCharset());
+			responseBody = EntityUtils.toString(entity, this.serializer.getCharset());
 			TextDispatcherResult textDispatcherResult = new TextDispatcherResult(command.getCommandId(), responseBody);
 			for (Header header : httpResponse.getAllHeaders()) {
 				textDispatcherResult.setHeader(header.getName(), header.getValue());
@@ -127,14 +127,6 @@ public class RestHttpDispatcher extends AbstractRemoteDispatcher implements Remo
 		} catch (ParseException | IOException e) {
 			throw new RemoteDispatchException("Error reading HTTP response. HTTP status:" + status + "." + e, e);
 		}
-	}
-
-	public ContentType getContentType() {
-		return contentType;
-	}
-
-	public void setContentType(ContentType contentType) {
-		this.contentType = contentType;
 	}
 
 	public CloseableHttpClient getHttpclient() {
