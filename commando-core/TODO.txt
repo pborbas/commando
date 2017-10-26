@@ -1,3 +1,4 @@
+
 FEATURES
 -auto register actions for commands with spring
 -dispatch commands to actions
@@ -34,6 +35,7 @@ Switch to Observable from ResultFuture
 Clean and separate -spring project dependencies. The spring import shouldn't import activemq dependency spring-core, spring-remote, etc. could solve it
 Spring Boot actuator support
 Spring security context manager
+DoS protection (Throttle filter)
 
 TODO:
 
@@ -41,31 +43,57 @@ Clean spring boot configuration
 Create sample PoC project with Spring Boot, Http+Jms
 Unit and system test coverage
 
-v1.1
+---------------------
+
+
+FROM HERE MOVED TO TRELLO : https://trello.com/b/7fKJOsOz/commando
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Spring security integration
 	Run as
 	Run as async (support for current user and other user too)
 	RolesAllowed
 
-V1.2
-Service registry
+
+Service registry with dispatcher
+
 Load balancer dispatcher (uses an LB strategy to delegate to dispatcher instances)
     -Uses registry data (first version only startup state)
     -Load balancer dispatcher (uses an LB strategy to delegate to dispatcher instances)
 
-V1.3
 Dynamic scaling.
 	-Start of an instance -> registry -> notify dispatcher LB's -> automatically get load
 	-Stop of an instance is handled by LB (retry should go to another node)
     -Auto remove timeout nodes from LB's
 
-V1.4
 Cache support
 	-Implement as a DispatcherFilter
 	-Remote uses headers
 	-Local cache? No headers
 	-Cache invalidation support. (invalidation header. cache always comes with key)
 
+Remoting
+    -Redis support
+    -RabbitMQ support
 
 Other Filters
 	-Default result in case of error
@@ -73,11 +101,8 @@ Other Filters
 	-Monitoring (Command/Result logging, action execution time, jmx support)
 
 
-Remoting
-    -Redis support
-    -RabbitMQ support
+
 Filters
-	-DoS protection
 	-Priority? (The queue for executor could be a priority queue)
 	-Streaming. (Chunk streams?)
 
