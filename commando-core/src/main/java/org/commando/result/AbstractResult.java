@@ -1,5 +1,7 @@
 package org.commando.result;
 
+import org.commando.command.Command;
+
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -18,6 +20,10 @@ public class AbstractResult implements Result {
         }
         this.commandId = commandId;
     }
+
+    public AbstractResult(Command command) {
+    	this(command.getCommandId());
+	}
 
     @Override
     public String getCommandId() {
