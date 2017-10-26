@@ -1,10 +1,10 @@
 package org.commando.sample.gw;
 
 import org.apache.activemq.command.ActiveMQQueue;
+import org.commando.json.serializer.JsonSerializer;
 import org.commando.remote.jms.dispatch.JmsTemplate;
 import org.commando.remote.serializer.Serializer;
 import org.commando.sample.product.dispatcher.ProductJmsDispatcher;
-import org.commando.xml.serializer.XmlSerializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -19,7 +19,7 @@ public class CommandoProductDispatcherConfiguration {
 
 	@Bean
 	public Serializer productSerializer() {
-		return new XmlSerializer();
+		return new JsonSerializer();
 	}
 
 	@Bean

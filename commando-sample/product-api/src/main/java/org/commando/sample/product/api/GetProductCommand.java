@@ -6,7 +6,10 @@ import org.commando.command.AbstractCommand;
  *
  */
 public class GetProductCommand extends AbstractCommand<ProductResult> {
-	private final Long productId;
+	private Long productId;
+
+	private GetProductCommand() {
+	}
 
 	public GetProductCommand(Long productId) {
 		this.productId = productId;
