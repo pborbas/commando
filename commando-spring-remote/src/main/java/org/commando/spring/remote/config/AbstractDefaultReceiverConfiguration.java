@@ -14,7 +14,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Extend it as a @Configuration class to have a default http receiver for all your actions
+ * Extend it as a @Configuration class to have a default receiver for all your actions
  */
 public abstract class AbstractDefaultReceiverConfiguration {
 
