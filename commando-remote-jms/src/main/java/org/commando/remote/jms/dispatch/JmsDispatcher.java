@@ -3,6 +3,7 @@ package org.commando.remote.jms.dispatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.commando.command.Command;
+import org.commando.exception.AsyncTimeoutException;
 import org.commando.exception.DispatchException;
 import org.commando.remote.dispatcher.AbstractRemoteDispatcher;
 import org.commando.remote.model.TextDispatcherCommand;
@@ -54,6 +55,9 @@ public class JmsDispatcher extends AbstractRemoteDispatcher {
             } else {
                 LOGGER.debug("Command sent through JMS. Waiting for result. Command ID:" + command.getCommandId());
                 TextMessage jmsResultMessage = this.resultJmsTemplate.receive("JMSCorrelationID='" + command.getCommandId() + "'", timeout);
+                if (jmsResultMessage==null) {
+                	throw new AsyncTimeoutException("No JMS result for Command ID:" + command.getCommandId()+" in "+timeout+" ms");
+				}
                 LOGGER.debug("Result received. Command ID:" + command.getCommandId());
                 String textResult = jmsResultMessage.getText();
                 TextDispatcherResult resultMessage = new TextDispatcherResult(command.getCommandId(), textResult);

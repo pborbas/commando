@@ -8,7 +8,11 @@ package org.commando.exception;
 public class AsyncTimeoutException extends AsyncExecutionException {
     private static final long serialVersionUID = 1L;
 
-    public AsyncTimeoutException(final String message, final Exception e) {
+	public AsyncTimeoutException(String message) {
+		super(message);
+	}
+
+	public AsyncTimeoutException(final String message, final Exception e) {
         super(message, e);
     }
 

@@ -7,7 +7,11 @@ package org.commando.exception;
 public class AsyncExecutionException extends DispatchException {
     private static final long serialVersionUID = 1L;
 
-    public AsyncExecutionException(final String message, final Throwable e) {
+	public AsyncExecutionException(String message) {
+		super(message);
+	}
+
+	public AsyncExecutionException(final String message, final Throwable e) {
         super(message, e);
     }
 
