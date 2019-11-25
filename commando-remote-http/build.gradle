@@ -1,12 +1,12 @@
 dependencies {
-    compile project(':commando-remote')
-    compile 'org.apache.httpcomponents:httpclient:'+httpClientVersion
-    compile 'org.apache.commons:commons-io:'+commonsIoVersion
-    compile 'javax.ws.rs:jsr311-api:1.1.1'
-    provided group: 'org.apache.tomcat', name: 'tomcat-servlet-api', version: tomcatServletApiVersion
-    testCompile project(':commando-xml')
-    testCompile project(':commando-json')
-    testCompile project(':commando-testbase')
-    testCompile 'org.eclipse.jetty:jetty-server:9.2.3.v20140905'
-    testCompile 'org.eclipse.jetty:jetty-servlet:9.2.3.v20140905'
+    api project(':commando-remote')
+    api 'org.apache.httpcomponents:httpclient:'+httpClientVersion
+    api 'org.apache.commons:commons-io:'+commonsIoVersion
+    api 'javax.ws.rs:jsr311-api:1.1.1'
+    implementation 'org.apache.tomcat:tomcat-servlet-api:'+tomcatServletApiVersion
+    testImplementation project(':commando-xml')
+    testImplementation project(':commando-json')
+    testImplementation project(':commando-testbase')
+    testImplementation 'org.eclipse.jetty:jetty-server:9.2.3.v20140905'
+    testImplementation 'org.eclipse.jetty:jetty-servlet:9.2.3.v20140905'
 }

@@ -1,5 +1,6 @@
 package org.commando.sample.gw;
 
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.commando.json.serializer.JsonSerializer;
 import org.commando.remote.jms.dispatch.JmsTemplate;
@@ -16,6 +17,15 @@ import javax.jms.DeliveryMode;
  */
 @Configuration
 public class CommandoProductDispatcherConfiguration {
+
+	public static final String DEFAULT_BROKER_URL = "tcp://localhost:61616";
+
+	@Bean
+	public ActiveMQConnectionFactory connectionFactory(){
+		ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory();
+		connectionFactory.setBrokerURL(DEFAULT_BROKER_URL);
+		return connectionFactory;
+	}
 
 	@Bean
 	public Serializer productSerializer() {

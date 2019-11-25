@@ -10,16 +10,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = CustomerApplication.class)
-@WebAppConfiguration
-@TransactionConfiguration(defaultRollback = true)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = CustomerApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class CustomerApplicationTests {
+	@LocalServerPort
+	int randomServerPort;
 
     @Autowired
 	Serializer serializer;
@@ -28,7 +27,7 @@ public class CustomerApplicationTests {
     @Before
     public void initDispatcher() {
 
-        dispatcher = new RestHttpDispatcher("http://localhost:8881/dispatcher", serializer);
+        dispatcher = new RestHttpDispatcher("http://localhost:"+randomServerPort+"/api/customer/", serializer);
     }
 
     @Test

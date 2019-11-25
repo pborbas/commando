@@ -34,6 +34,7 @@ public abstract class AbstractRemoteDispatcher extends AbstractDispatcher implem
         return this;
     }
 
+	//TODO: must test
     @Override
 	public <C extends Command<R>, R extends Result> R execute(C dispatchCommand) throws DispatchException{
         TextDispatcherCommand textDispatcherCommand=this.serializeCommand(dispatchCommand);

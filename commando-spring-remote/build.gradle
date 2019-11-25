@@ -1,7 +1,7 @@
 dependencies {
-    compile project(':commando-spring-core')
-    compile project(':commando-remote')
+    api project(':commando-spring-core')
+    api project(':commando-remote')
 
-    testCompile  group: 'org.springframework', name: 'spring-test', version: springVersion
+    testImplementation  group: 'org.springframework', name: 'spring-test', version: springVersion
 
 }

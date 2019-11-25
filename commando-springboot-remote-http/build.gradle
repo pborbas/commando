@@ -1,9 +1,7 @@
 dependencies {
-    compile project(':commando-spring-remote-http')
-    compile project(':commando-springboot-core')
-	
-    //provided 'org.springframework.boot:spring-boot:1.1.8.RELEASE'
-
-    testCompile  group: 'org.springframework', name: 'spring-test', version: springVersion
+    api project(':commando-spring-remote-http')
+    api project(':commando-springboot-core')
+    implementation 'org.apache.tomcat:tomcat-servlet-api:'+tomcatServletApiVersion
+    testImplementation  group: 'org.springframework', name: 'spring-test', version: springVersion
 
 }

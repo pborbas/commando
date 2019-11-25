@@ -1,4 +1,4 @@
 dependencies {
-	compile project(':commando-remote')
-	compile 'com.thoughtworks.xstream:xstream:'+xstreamVersion
+	api project(':commando-remote')
+	api 'com.thoughtworks.xstream:xstream:'+xstreamVersion
 }

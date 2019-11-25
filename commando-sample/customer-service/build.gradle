@@ -1,39 +1,18 @@
-buildscript {
-    ext {
-        springBootVersion = springBootVersion
-    }
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-    }
+plugins {
+  id "org.springframework.boot" version "2.2.1.RELEASE"
 }
-
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'spring-boot' 
 
 dependencies {
-    compile project(":customer-api")
+    api project(":customer-api")
 
-    compile("io.github.pborbas.commando:commando-xml:"+commandoVersion)
-    compile("io.github.pborbas.commando:commando-springboot-remote-http:"+commandoVersion)
+    api("io.github.pborbas.commando:commando-xml:"+commandoVersion)
+    api("io.github.pborbas.commando:commando-springboot-remote-http:"+commandoVersion)
 
-    compile("org.springframework.boot:spring-boot-starter-web")
-    compile("org.springframework.boot:spring-boot-starter-data-jpa")
+    api("org.springframework.boot:spring-boot-starter-web")
+    api("org.springframework.boot:spring-boot-starter-data-jpa")
     
-    compile("org.hsqldb:hsqldb")
+    api("org.hsqldb:hsqldb")
     
     testCompile("org.springframework.boot:spring-boot-starter-test")
-}
-
-eclipse {
-    classpath {
-         containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
-         containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7'
-    }
 }
 

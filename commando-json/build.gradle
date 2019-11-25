@@ -1,5 +1,5 @@
 dependencies {
-    compile project(':commando-remote')
-    compile("com.fasterxml.jackson.core:jackson-databind:"+versionJackson)
+    api project(':commando-remote')
+    api("com.fasterxml.jackson.core:jackson-databind:"+versionJackson)
 
 }

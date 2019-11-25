@@ -1,40 +1,37 @@
-subprojects {
-
-    apply plugin: 'java'
-    apply plugin: 'eclipse'
-
-    sourceCompatibility = 1.7
-    targetCompatibility = 1.7
-
-//ECLIPSE
-eclipse {
-    classpath {
-        downloadSources = true
-        downloadJavadoc = true
-    }
+plugins {
+  id 'io.spring.dependency-management' version '1.0.8.RELEASE'
 }
 
-    configurations {
-        provided
-        compile.extendsFrom provided
-    }
 
-    repositories {
-       mavenLocal()
-       mavenCentral()
-    }
+subprojects {
 
-    dependencies {
-     	compile 'commons-logging:commons-logging:1.2+'
-//      	testCompile 'log4j:log4j:1.2.+'
-       	testCompile 'junit:junit:4.11'
-    }
+    apply plugin: 'java-library'
+    apply plugin: 'io.spring.dependency-management'
 
     group = 'io.github.pborbas.commando'
     version = commandoVersion
 
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+     repositories {
+       mavenLocal()
+       mavenCentral()
+    }
+
+    // dependencies {
+    //  	compile 'commons-logging:commons-logging:1.2+'
+    //    	testCompile 'junit:junit:4.11'
+    // }
+
     jar {
         manifest.attributes provider: 'Peter Borbas'
     }
+
+    dependencyManagement {
+    imports {
+      mavenBom("org.springframework.boot:spring-boot-dependencies:"+springBootVersion)
+    }
+  }
 
 }

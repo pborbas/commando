@@ -1,4 +1,4 @@
 dependencies {
-	compile project(':commando-core')
-	compile 'junit:junit:'+junitVersion
+	api project(':commando-core')
+	implementation 'junit:junit:'+junitVersion
 }

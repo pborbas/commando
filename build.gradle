@@ -1,118 +1,89 @@
-//apply plugin: 'maven'
-
-task wrapper(type: Wrapper) {
-        gradleVersion = '2.3'
-        jarFile = '../wrapper/wrapper.jar'
-}
-
 subprojects {
 
-    apply plugin: 'java'
-    apply plugin: 'eclipse'
-    apply plugin: 'idea'
+    apply plugin: 'java-library'
     apply plugin: 'maven'
 
-sourceCompatibility = 1.7
-
-//ECLIPSE
-eclipse {
-    classpath {
-        downloadSources = true
-        downloadJavadoc = true
-    }
-}
-
-    configurations {
-        provided
-        compile.extendsFrom provided
-    }
+    sourceCompatibility = 1.8
 
     repositories {
-       mavenCentral()
+        mavenCentral()
     }
 
     dependencies {
-     	compile 'commons-logging:commons-logging:'+commonsLoggingVersion
-      	testCompile 'log4j:log4j:'+log4jVersion
-       	testCompile 'junit:junit:'+junitVersion
-       	testCompile 'org.mockito:mockito-all:'+mockitoVersion
+        api 'commons-logging:commons-logging:' + commonsLoggingVersion
+        testCompile 'log4j:log4j:' + log4jVersion
+        testCompile 'junit:junit:' + junitVersion
+        testCompile 'org.mockito:mockito-all:' + mockitoVersion
     }
 
     group = 'io.github.pborbas.commando'
     version = commandoVersion
 
 //ARTIFACTS
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
 
     jar {
         manifest.attributes provider: 'Peter Borbas'
     }
 
-artifacts {
-    archives sourcesJar
-    archives javadocJar
-    archives jar
-}
-
-task wrapper(type: Wrapper) {
-        gradleVersion = '2.3'
-        jarFile = '../wrapper/wrapper.jar'
-}
-
-
-uploadArchives {
-  repositories {
-    mavenDeployer {
- //     beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-        authentication(userName: ossrhUsername, password: ossrhPassword)
-      }
-
-      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-        authentication(userName: ossrhUsername, password: ossrhPassword)
-      }
-
-      pom.project {
-        name 'Commando library'
-        packaging 'jar'
-        // optionally artifactId can be defined here 
-        description 'Command pattern library'
-        url 'http://pborbas.github.io/commando/'
-
-        scm {
-          connection 'https://github.com/pborbas/commando.git'
-          developerConnection 'https://github.com/pborbas/commando.git'
-          url 'https://github.com/pborbas/commando'
-        }
-
-        licenses {
-          license {
-            name 'The Apache License, Version 2.0'
-            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-          }
-        }
-
-        developers {
-          developer {
-            id 'pborbas'
-            name 'Peter Borbas'
-            email 'peetair@gmail.com'
-          }
-        }
-      }
+    artifacts {
+        archives sourcesJar
+        archives javadocJar
+        archives jar
     }
-  }
-}
 
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                //     beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+
+                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+
+                pom.project {
+                    name 'Commando library'
+                    packaging 'jar'
+                    // optionally artifactId can be defined here
+                    description 'Command pattern library'
+                    url 'http://pborbas.github.io/commando/'
+
+                    scm {
+                        connection 'https://github.com/pborbas/commando.git'
+                        developerConnection 'https://github.com/pborbas/commando.git'
+                        url 'https://github.com/pborbas/commando'
+                    }
+
+                    licenses {
+                        license {
+                            name 'The Apache License, Version 2.0'
+                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id 'pborbas'
+                            name 'Peter Borbas'
+                            email 'peetair@gmail.com'
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 
 }

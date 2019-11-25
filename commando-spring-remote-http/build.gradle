@@ -1,11 +1,11 @@
 dependencies {
-    compile project(':commando-spring-remote')
-    compile project(':commando-remote-http')
+    api project(':commando-spring-remote')
+    api project(':commando-remote-http')
 
-    compile group: 'org.springframework', name: 'spring-web', version: springVersion
+    api group: 'org.springframework', name: 'spring-web', version: springVersion
+
+    implementation group: 'org.apache.tomcat', name: 'tomcat-servlet-api', version: tomcatServletApiVersion
     
-    provided group: 'org.apache.tomcat', name: 'tomcat-servlet-api', version: tomcatServletApiVersion
-    
-    testCompile  group: 'org.springframework', name: 'spring-test', version: springVersion
+    testImplementation  group: 'org.springframework', name: 'spring-test', version: springVersion
 
 }

@@ -4,7 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.commando.remote.http.receiver.HttpCommandReceiver;
 import org.commando.spring.remote.http.receiver.SpringCommandReceiverSerlvet;
-import org.springframework.boot.context.embedded.ServletContextInitializer;
+import org.springframework.boot.web.servlet.ServletContextInitializer;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;

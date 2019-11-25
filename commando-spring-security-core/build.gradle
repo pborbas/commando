@@ -1,5 +1,5 @@
 dependencies {
-    compile project(':commando-spring-core')
-    compile 'org.springframework.security:spring-security-core:'+springSecurityVersion
-    testCompile  group: 'org.springframework', name: 'spring-test', version: springVersion
+    api project(':commando-spring-core')
+    api 'org.springframework.security:spring-security-core:'+springSecurityVersion
+    testImplementation  group: 'org.springframework', name: 'spring-test', version: springVersion
 }

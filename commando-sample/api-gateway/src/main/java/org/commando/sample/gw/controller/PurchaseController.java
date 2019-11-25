@@ -1,5 +1,7 @@
 package org.commando.sample.gw.controller;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.commando.exception.DispatchException;
 import org.commando.result.ResultFuture;
 import org.commando.sample.customer.api.command.CustomerResult;
@@ -24,6 +26,8 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/purchases")
 public class PurchaseController {
 
+	private static final Log LOG = LogFactory.getLog(PurchaseController.class);
+
     private final CustomerDispatcher customerDispatcher;
     private final ProductDispatcher productDispatcher;
 
@@ -45,10 +49,11 @@ public class PurchaseController {
 				.dispatch(new GetProductCommand(purchaseResource.getProduct().getProductId()));
 
 		Customer customer = customerFuture.getResult().getValue();
-		Product product = productFuture.getResult(2, TimeUnit.MINUTES).getValue();
+		Product product = productFuture.getResult(3, TimeUnit.SECONDS).getValue();
 		purchaseResource.setCustomer(customer);
 		purchaseResource.setProduct(product);
 		purchaseResource.setPrice(product.getPrice().multiply(BigDecimal.valueOf(purchaseResource.getQuantity())));
+//		LOG.info("Purchase created");
 		return purchaseResource;
 	}
 }

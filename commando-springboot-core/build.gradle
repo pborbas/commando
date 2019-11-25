@@ -1,7 +1,6 @@
 dependencies {
-    compile project(':commando-spring-core')
-    provided 'org.springframework.boot:spring-boot:'+springBootVersion
-
-    testCompile  group: 'org.springframework', name: 'spring-test', version: springVersion
+    api project(':commando-spring-core')
+    api 'org.springframework.boot:spring-boot:'+springBootVersion
+    testImplementation  group: 'org.springframework', name: 'spring-test', version: springVersion
 
 }

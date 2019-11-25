@@ -88,6 +88,7 @@ public class RestHttpDispatcher extends AbstractRemoteDispatcher implements Remo
 		return request;
 	}
 
+	//TODO: must test (or remove feature)
 	protected String createHttpPath(final Command<? extends Result> command) throws DispatchException {
 		Path pathAnnotation = command.getClass().getAnnotation(Path.class);
 		if (pathAnnotation != null) {
