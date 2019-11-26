@@ -2,14 +2,12 @@ package org.commando.sample.gw.controller;
 
 import org.commando.exception.DispatchException;
 import org.commando.sample.customer.api.command.CreateCustomerCommand;
+import org.commando.sample.customer.api.command.GetCustomerCommand;
 import org.commando.sample.customer.api.command.ListCustomersCommand;
 import org.commando.sample.customer.api.dispatcher.CustomerDispatcher;
 import org.commando.sample.customer.api.model.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,6 +21,11 @@ public class CustomerController {
 	public CustomerController(CustomerDispatcher customerDispatcher) {
 		this.customerDispatcher = customerDispatcher;
 	}
+
+	@RequestMapping(value = "/{customerId}", method = RequestMethod.GET)
+    public Customer getCustomers(@PathVariable Long customerId) throws DispatchException {
+        return this.customerDispatcher.dispatchSync(new GetCustomerCommand(customerId)).getValue();
+    }
 
 	@RequestMapping(method = RequestMethod.GET)
     public List<Customer> listCustomers() throws DispatchException {
