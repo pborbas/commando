@@ -24,9 +24,8 @@ public class GetCustomerAction extends AbstractAction<GetCustomerCommand, Custom
 
 	@Override
 	public CustomerResult execute(GetCustomerCommand command) throws DispatchException {
-
+		//		Customer customer = this.customerRepository.findOne(command.getCustomerId());
 		Customer customer = new Customer(command.getCustomerId(), "John Smith");
-//		Customer customer = this.customerRepository.findOne(command.getCustomerId());
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {

@@ -30,8 +30,13 @@ public class GetProductAction extends AbstractAction<GetProductCommand, ProductR
 	@Override
 	@Transactional
 	public ProductResult execute(final GetProductCommand getProductCommand) throws DispatchException {
+		//		Product product = productRepository.findOne(getProductCommand.getProductId());
 		Product product = new Product(getProductCommand.getProductId(), "Microservices with Commando", BigDecimal.TEN, 5);
-//		Product product = productRepository.findOne(getProductCommand.getProductId());
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		return new ProductResult(getProductCommand.getCommandId(), product);
 	}
 

@@ -2,7 +2,7 @@ include "commando-core"
 // include 'commando-tmp'
 include "commando-remote"
 include "commando-remote-http"
-// include "commando-remote-http-reactive"
+include "commando-remote-http-reactive"
 include "commando-remote-jms"
 include "commando-xml"
 include "commando-testbase"

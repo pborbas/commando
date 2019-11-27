@@ -47,6 +47,10 @@ public class HttpDispatcher extends AbstractRemoteDispatcher implements RemoteDi
 		this(null, serializer, targetUrl, DEFAULT_THREAD_POOL_SIZE);
 	}
 
+	public HttpDispatcher(final String targetUrl, final Serializer serializer, int threadPoolSize) {
+		this(null, serializer, targetUrl, threadPoolSize);
+	}
+
 	public HttpDispatcher(final CloseableHttpClient httpClient, final Serializer serializer, final String targetUrl,
 			int threadPoolSize) {
 		super(serializer);

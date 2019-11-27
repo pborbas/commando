@@ -1,4 +1,4 @@
-package org.commando.sample.product;
+package org.commando.sample.product.config;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
@@ -11,6 +11,7 @@ import org.commando.remote.receiver.CommandReceiver;
 import org.commando.remote.receiver.DefaultCommandReceiver;
 import org.commando.remote.serializer.Serializer;
 import org.commando.sample.product.dispatcher.ProductDispatcher;
+import org.commando.sample.product.dispatcher.ProductInVmDispatcher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
@@ -20,12 +21,17 @@ import javax.jms.Destination;
 import java.net.URI;
 
 /**
- *
+ * Configures the dispatcher of the module
  */
 @Configuration
-public class CommandoJmsReceiverConfiguration {
+public class CommandoConfiguration {
 
 	public static final String DEFAULT_BROKER_URL = "tcp://localhost:61616";
+
+	@Bean
+	public ProductDispatcher customerDispatcher() {
+		return new ProductInVmDispatcher();
+	}
 
 	@Bean
 	public BrokerService brokerService() throws Exception {

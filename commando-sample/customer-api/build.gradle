@@ -1,6 +1,7 @@
 dependencies {
     api("io.github.pborbas.commando:commando-core:"+commandoVersion)
     api("io.github.pborbas.commando:commando-remote-http:"+commandoVersion)
+    api("io.github.pborbas.commando:commando-remote-http-reactive:"+commandoVersion)
     api("io.github.pborbas.commando:commando-spring-core:"+commandoVersion)
     api 'org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final'
 }

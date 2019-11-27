@@ -20,8 +20,9 @@ public class CommandoConfiguration {
 	@Bean
 	public CustomerDispatcher customerDispatcher() {
 		CustomerInVmDispatcher dispatcher = new CustomerInVmDispatcher();
-		dispatcher.setExecutorService(Executors.newFixedThreadPool(50));
+		dispatcher.setExecutorService(Executors.newFixedThreadPool(250));
 		return dispatcher;
+
 	}
 
 	@Bean
