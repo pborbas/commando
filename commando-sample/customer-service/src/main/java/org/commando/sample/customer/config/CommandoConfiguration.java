@@ -3,7 +3,6 @@ package org.commando.sample.customer.config;
 import org.commando.remote.receiver.CommandReceiver;
 import org.commando.remote.receiver.DefaultCommandReceiver;
 import org.commando.remote.serializer.Serializer;
-import org.commando.sample.customer.api.dispatcher.CustomerDispatcher;
 import org.commando.sample.customer.api.dispatcher.CustomerInVmDispatcher;
 import org.commando.xml.serializer.XmlSerializer;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +17,7 @@ import java.util.concurrent.Executors;
 public class CommandoConfiguration {
 
 	@Bean
-	public CustomerDispatcher customerDispatcher() {
+	public CustomerInVmDispatcher customerDispatcher() {
 		CustomerInVmDispatcher dispatcher = new CustomerInVmDispatcher();
 		dispatcher.setExecutorService(Executors.newFixedThreadPool(250));
 		return dispatcher;

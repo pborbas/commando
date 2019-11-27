@@ -1,6 +1,7 @@
 dependencies {
+    compile project(':commando-core-reactive')
     compile project(':commando-remote')
-    compile 'io.projectreactor.netty:reactor-netty:0.9.1.RELEASE'
+    compile 'io.projectreactor.netty:reactor-netty:'+projectreactorNettyVersion
     testCompile project(':commando-xml')
     testCompile project(':commando-testbase')
 

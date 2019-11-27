@@ -60,20 +60,20 @@ public abstract class AbstractDispatcher implements Dispatcher {
 	}
 
 	@Override
-	public <C extends Command<R>, R extends Result> ResultFuture<R> dispatch(final C dispatchCommand) {
+	public <C extends Command<R>, R extends Result> ResultFuture<R> dispatch(final C command) {
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Passing command: " + dispatchCommand.getClass().getName() + ". ID: " + dispatchCommand
+			LOGGER.debug("Passing command: " + command.getClass().getName() + ". ID: " + command
 					.getCommandId() + " to executor thread");
 		}
-		final ResultFuture<R> result = new ResultFuture<R>(this.getResultTimeout(dispatchCommand));
+		final ResultFuture<R> result = new ResultFuture<R>(this.getResultTimeout(command));
 		final Object securityContextInfo = this.securityContextManager.getSecurityContext();
 		ResultFuture.runAsync(() -> {
 			try {
 				securityContextManager.setSecurityContext(securityContextInfo);
-				R wfResult = AbstractDispatcher.this.executeCommonWorkflow(dispatchCommand);
+				R wfResult = AbstractDispatcher.this.executeCommonWorkflow(command);
 				result.complete(wfResult);
 			} catch (DispatchException | RuntimeException e) {
-				logException(e, dispatchCommand);
+				logException(e, command);
 				result.completeExceptionally(e);
 			} finally {
 				securityContextManager.clearSecurityContext();

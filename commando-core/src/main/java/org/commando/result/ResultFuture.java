@@ -14,7 +14,7 @@ import java.util.concurrent.TimeoutException;
  * @param <R> Type of result
  * @author pborbas
  */
-public class ResultFuture<R extends Result> extends CompletableFuture<R> { //implements DispatcherCallback {
+public class ResultFuture<R extends Result> extends CompletableFuture<R> {
 
 	private final long startTime;
 	private final long timeout;

@@ -3,24 +3,21 @@ package org.commando.sample.gw.controller;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.commando.exception.DispatchException;
-import org.commando.result.ResultFuture;
 import org.commando.sample.customer.api.command.CustomerResult;
 import org.commando.sample.customer.api.command.GetCustomerCommand;
 import org.commando.sample.customer.api.dispatcher.CustomerDispatcher;
-import org.commando.sample.customer.api.model.Customer;
 import org.commando.sample.gw.resource.PurchaseResource;
 import org.commando.sample.product.api.GetProductCommand;
 import org.commando.sample.product.api.ProductResult;
 import org.commando.sample.product.dispatcher.ProductDispatcher;
-import org.commando.sample.product.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
-import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/purchases")
@@ -42,18 +39,16 @@ public class PurchaseController {
 	 */
 
 	@RequestMapping(method = RequestMethod.POST)
-	public PurchaseResource createPurchase(@RequestBody PurchaseResource purchaseResource) throws DispatchException {
-		ResultFuture<CustomerResult> customerFuture = this.customerDispatcher
+	public Mono<PurchaseResource> createPurchase(@RequestBody PurchaseResource purchaseResource) throws DispatchException {
+		Mono<CustomerResult> customerResultMono = this.customerDispatcher
 				.dispatch(new GetCustomerCommand(purchaseResource.getCustomer().getCustomerId()));
-		ResultFuture<ProductResult> productFuture = this.productDispatcher
-				.dispatch(new GetProductCommand(purchaseResource.getProduct().getProductId()));
-
-		Customer customer = customerFuture.getResult().getValue();
-		Product product = productFuture.getResult(3, TimeUnit.SECONDS).getValue();
-		purchaseResource.setCustomer(customer);
-		purchaseResource.setProduct(product);
-		purchaseResource.setPrice(product.getPrice().multiply(BigDecimal.valueOf(purchaseResource.getQuantity())));
-//		LOG.info("Purchase created");
-		return purchaseResource;
+		Mono<ProductResult> productResultMono = Mono.fromFuture(this.productDispatcher
+				.dispatch(new GetProductCommand(purchaseResource.getProduct().getProductId())));
+		return Mono.zip(customerResultMono, productResultMono, (customerResult, productResult) -> {
+			purchaseResource.setCustomer(customerResult.getValue());
+			purchaseResource.setProduct(productResult.getValue());
+			purchaseResource.setPrice(productResult.getValue().getPrice().multiply(BigDecimal.valueOf(purchaseResource.getQuantity())));
+			return purchaseResource;
+		});
 	}
 }

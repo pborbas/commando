@@ -47,6 +47,7 @@ public abstract class AbstractRemoteDispatcher extends AbstractDispatcher implem
         LOGGER.debug("Parsing result after remote execution: "+textDispatcherResult.toString(LOGGER.isDebugEnabled()));
         if (textDispatcherResult.getHeader(RemoteDispatcher.HEADER_RESULT_EXCEPTION_CLASS) != null) {
             LOGGER.warn("Result contains exception headers");
+            //TODO: fix it: we always run to parse error on exceptions
             throw ExceptionUtil.instantiateDispatchException(textDispatcherResult.getHeader(RemoteDispatcher.HEADER_RESULT_EXCEPTION_CLASS), textDispatcherResult.getTextResult());
         }
         R dispatchResult;
