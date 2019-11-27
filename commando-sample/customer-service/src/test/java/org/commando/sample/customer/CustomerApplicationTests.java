@@ -1,7 +1,7 @@
 package org.commando.sample.customer;
 
 import org.commando.exception.DispatchException;
-import org.commando.remote.http.dispatcher.RestHttpDispatcher;
+import org.commando.remote.http.dispatcher.HttpDispatcher;
 import org.commando.remote.serializer.Serializer;
 import org.commando.sample.customer.api.command.CreateCustomerCommand;
 import org.commando.sample.customer.api.command.ListCustomersCommand;
@@ -22,12 +22,12 @@ public class CustomerApplicationTests {
 
     @Autowired
 	Serializer serializer;
-    RestHttpDispatcher dispatcher;
+    HttpDispatcher dispatcher;
 
     @Before
     public void initDispatcher() {
 
-        dispatcher = new RestHttpDispatcher("http://localhost:"+randomServerPort+"/api/customer/", serializer);
+        dispatcher = new HttpDispatcher("http://localhost:"+randomServerPort+"/api/customer/", serializer);
     }
 
     @Test

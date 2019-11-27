@@ -7,7 +7,7 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
     api project(":customer-api")
     api project(":product-api")
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {

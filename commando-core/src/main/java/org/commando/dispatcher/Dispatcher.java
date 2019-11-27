@@ -20,14 +20,21 @@ public interface Dispatcher {
     public static final String HEADER_RESULT_CLASS = "Result-Class";
 
     /**
-     * Finds the {@link Action} for the specified {@link Command} and executes
-     * it. Returns the appropriate {@link Result}.
+     * Depending on implementation delegates the command remotely or
+	 * Finds the {@link Action} for the specified {@link Command} and executes
+     * it asynchronously. Returns the appropriate {@link Result}.
      * 
-     * @return The action's result.
-     * @throws DispatchException
-     *             if the action execution failed.
+     * @return The action's result as a CompletableFuture
      */
-    <C extends Command<R>, R extends Result> ResultFuture<R> dispatch(C command) throws DispatchException;
+    <C extends Command<R>, R extends Result> ResultFuture<R> dispatch(C command);
+
+	/**
+	 * Depending on implementation delegates the command remotely or
+	 * finds the {@link Action} for the specified {@link Command} and executes
+	 * it synchronously. Returns the appropriate {@link Result}.
+	 *
+	 * @return The action's result
+	 */
 	<C extends Command<R>, R extends Result>  R dispatchSync(C command) throws DispatchException;
 	long getTimeout();
 

@@ -5,7 +5,10 @@ import org.commando.example.SampleCommand;
 import org.commando.example.SampleResult;
 import org.commando.exception.AsyncTimeoutException;
 import org.commando.exception.DispatchException;
-import org.commando.result.*;
+import org.commando.result.NoResult;
+import org.commando.result.Result;
+import org.commando.result.ResultFuture;
+import org.commando.result.VoidResult;
 import org.commando.testbase.command.NoResultCommand;
 import org.commando.testbase.command.TestFailCommand;
 import org.commando.testbase.command.TestWaitCommand;
@@ -13,7 +16,6 @@ import org.commando.testbase.exception.TestDispatchException;
 import org.commando.testbase.filter.TestFilter;
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -59,32 +61,32 @@ public abstract class AbstractDispatcherTest {
         futureResult.getResult();
     }
 
-    @SuppressWarnings("unchecked")
-    @Test
-    public void testResultFutureCallsCallbackOnSuccess() throws DispatchException {
-	SampleCommand command = new SampleCommand();
-	ResultFuture<SampleResult> futureResult = this.getDispatcher().dispatch(command);
-	ResultCallback<SampleResult> resultCallback = Mockito.mock(ResultCallback.class);
-	futureResult.registerCallback(resultCallback);
-	SampleResult sampleResult = futureResult.getResult();
-	Mockito.verify(resultCallback).onSuccess(sampleResult);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test
-    public void testResultFutureCallsCallbackOnFailure() throws DispatchException {
-	TestFailCommand command = new TestFailCommand();
-	ResultFuture<VoidResult> futureResult = this.getDispatcher().dispatch(command);
-	ResultCallback<VoidResult> resultCallback = Mockito.mock(ResultCallback.class);
-	futureResult.registerCallback(resultCallback);
-	DispatchException dispatchException = null;
-	try {
-	    futureResult.getResult();
-	} catch (DispatchException e) {
-	    dispatchException = e;
-	}
-	Mockito.verify(resultCallback).onError(dispatchException);
-    }
+//    @SuppressWarnings("unchecked")
+//    @Test
+//    public void testResultFutureCallsCallbackOnSuccess() throws DispatchException {
+//	SampleCommand command = new SampleCommand();
+//	ResultFuture<SampleResult> futureResult = this.getDispatcher().dispatch(command);
+//	ResultCallback<SampleResult> resultCallback = Mockito.mock(ResultCallback.class);
+//	futureResult.registerCallback(resultCallback);
+//	SampleResult sampleResult = futureResult.getResult();
+//	Mockito.verify(resultCallback).onSuccess(sampleResult);
+//    }
+//
+//    @SuppressWarnings("unchecked")
+//    @Test
+//    public void testResultFutureCallsCallbackOnFailure() throws DispatchException {
+//	TestFailCommand command = new TestFailCommand();
+//	ResultFuture<VoidResult> futureResult = this.getDispatcher().dispatch(command);
+//	ResultCallback<VoidResult> resultCallback = Mockito.mock(ResultCallback.class);
+//	futureResult.registerCallback(resultCallback);
+//	DispatchException dispatchException = null;
+//	try {
+//	    futureResult.getResult();
+//	} catch (DispatchException e) {
+//	    dispatchException = e;
+//	}
+//	Mockito.verify(resultCallback).onError(dispatchException);
+//    }
 
     protected abstract Dispatcher getDispatcher();
 }

@@ -5,7 +5,6 @@ import org.commando.command.Command;
 import org.commando.dispatcher.Dispatcher;
 import org.commando.dispatcher.InVmDispatcher;
 import org.commando.dispatcher.filter.DispatchFilter;
-import org.commando.exception.DispatchException;
 import org.commando.exception.DuplicateActionException;
 import org.commando.result.Result;
 import org.commando.result.ResultFuture;
@@ -29,7 +28,7 @@ public class SpringInVmDispatcher<A extends Action> extends InVmDispatcher<A> im
     }
 
     @Override
-    public <C extends Command<R>, R extends Result> ResultFuture<R> dispatch(final C command) throws DispatchException {
+    public <C extends Command<R>, R extends Result> ResultFuture<R> dispatch(final C command) {
         return super.dispatch(command);
     }
 

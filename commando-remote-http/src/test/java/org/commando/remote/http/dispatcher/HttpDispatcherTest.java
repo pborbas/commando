@@ -19,14 +19,14 @@ import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
-public class RestHttpDispatcherTest extends AbstractDispatcherTest {
+public class HttpDispatcherTest extends AbstractDispatcherTest {
 
     static Server server;
 
-    final RestHttpDispatcher dispatcher;
+    final HttpDispatcher dispatcher;
 
-    public RestHttpDispatcherTest() {
-        this.dispatcher = new RestHttpDispatcher("http://localhost:8123/", new JsonSerializer());
+    public HttpDispatcherTest() {
+        this.dispatcher = new HttpDispatcher("http://localhost:8123/", new JsonSerializer());
         this.dispatcher.setTimeout(1000);
     }
 
@@ -42,7 +42,7 @@ public class RestHttpDispatcherTest extends AbstractDispatcherTest {
     @Test(expected=CircuiteBreakerException.class)
     public void testCircuiteBreaker() throws DispatchException {
         //send to invalid port
-        RestHttpDispatcher dispatcher = new RestHttpDispatcher("http://localhost:9999/", new JsonSerializer());
+        HttpDispatcher dispatcher = new HttpDispatcher("http://localhost:9999/", new JsonSerializer());
         CircuitBreakerFilter circuitBreakerFilter = new CircuitBreakerFilter();
         circuitBreakerFilter.setErrorThreshold(2);
         circuitBreakerFilter.setOpenInterval(500);
@@ -53,7 +53,7 @@ public class RestHttpDispatcherTest extends AbstractDispatcherTest {
         dispatcher.dispatch(new SampleCommand()).getResult();
     }
 
-    private void dispatchWithoutError(final RestHttpDispatcher dispatcher, final Command<? extends Result> command) {
+    private void dispatchWithoutError(final HttpDispatcher dispatcher, final Command<? extends Result> command) {
         try {
             dispatcher.dispatch(command).getResult(5000, TimeUnit.MILLISECONDS);
         } catch (DispatchException e) {

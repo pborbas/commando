@@ -47,13 +47,12 @@ public abstract class AbstractHttpCommandReceiverServlet extends HttpServlet {
 
     }
 
-    protected void process(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
+    protected void process(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException {
     	try {
             TextDispatcherCommand textDispatcherCommand = this.parseRequest(req);
-			LOGGER.debug("Command received: " + textDispatcherCommand.toString(LOGGER.isDebugEnabled()));
-            TextDispatcherResult textDispatcherResult = this.commandReceiver.execute(textDispatcherCommand);
+            TextDispatcherResult textDispatcherResult = this.commandReceiver.execute(textDispatcherCommand).get();
             this.writeResponse(resp, textDispatcherResult);
-        } catch (DispatchException e) {
+        } catch (Exception e) {
             LOGGER.error(e, e);
         }
     }
@@ -64,7 +63,6 @@ public abstract class AbstractHttpCommandReceiverServlet extends HttpServlet {
             for (String headerName:textDispatcherResult.getHeaders().keySet()) {
                 ((HttpServletResponse)response).setHeader(headerName, textDispatcherResult.getHeader(headerName));
             }
-			LOGGER.debug("Response sent:"+textDispatcherResult.toString(LOGGER.isDebugEnabled()));
         } catch (IOException e) {
             throw new DispatchException("Error while writing result to response:" + e, e);
         }

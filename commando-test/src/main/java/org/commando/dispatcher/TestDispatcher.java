@@ -113,16 +113,20 @@ public class TestDispatcher implements Dispatcher {
 	}
 
 	@Override
-	public <C extends Command<R>, R extends Result> ResultFuture<R> dispatch(C command) throws DispatchException {
+	public <C extends Command<R>, R extends Result> ResultFuture<R> dispatch(C command)  {
 		this.executedCommands.add(command);
 		R result = null;
 		for (ResultSelector rs : this.registeredResults) {
 			if (rs.isResultFor(command)) {
-				result = (R) rs.getResult(command);
+				try {
+					result = (R) rs.getResult(command);
+				} catch (DispatchException e) {
+					throw new RuntimeException(e);
+				}
 			}
 		}
 		if (result == null) {
-			throw new DispatchException(
+			throw new RuntimeException(
 					"No result registered for commandId:" + command.getCommandId() + ", type:" + command
 							.getCommandType());
 		}

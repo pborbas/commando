@@ -59,8 +59,6 @@ public class InVmDispatcherTest {
                 for (int i=0; i<count; i++) {
                     try {
                         resultQueue.offer(dispatcher.dispatch(command), 1, TimeUnit.SECONDS);
-                    } catch (DispatchException e) {
-                        e.printStackTrace();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

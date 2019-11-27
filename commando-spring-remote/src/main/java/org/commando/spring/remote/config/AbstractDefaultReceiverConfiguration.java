@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Extend it as a @Configuration class to have a default receiver for all your actions
  */
+@Deprecated
 public abstract class AbstractDefaultReceiverConfiguration {
 
     @Bean

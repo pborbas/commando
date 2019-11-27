@@ -6,11 +6,11 @@ import org.commando.remote.DispatcherFactory;
 import org.commando.remote.model.DispatcherUrl;
 import org.commando.remote.serializer.SerializerFactory;
 
-public class RestHttpDispatcherFactory implements DispatcherFactory {
+public class HttpDispatcherFactory implements DispatcherFactory {
 
     private final SerializerFactory serializerFactory;
 
-    public RestHttpDispatcherFactory(final SerializerFactory serializerFactory) {
+    public HttpDispatcherFactory(final SerializerFactory serializerFactory) {
         super();
         this.serializerFactory = serializerFactory;
     }
@@ -18,7 +18,7 @@ public class RestHttpDispatcherFactory implements DispatcherFactory {
     @Override
     public Dispatcher create(final DispatcherUrl url) throws DispatchException {
         if (isFactoryFor(url)) {
-            RestHttpDispatcher dispatcher = new RestHttpDispatcher(createTargetUrl(url), serializerFactory.create(url.getSerializer()));
+            HttpDispatcher dispatcher = new HttpDispatcher(createTargetUrl(url), serializerFactory.create(url.getSerializer()));
             dispatcher.setTimeout(url.getTimeout());
             return dispatcher;
         }

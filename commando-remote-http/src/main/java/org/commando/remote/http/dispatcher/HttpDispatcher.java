@@ -13,7 +13,9 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 import org.commando.command.Command;
 import org.commando.dispatcher.Dispatcher;
@@ -26,29 +28,43 @@ import org.commando.remote.model.TextDispatcherResult;
 import org.commando.remote.serializer.Serializer;
 import org.commando.result.Result;
 
-import javax.ws.rs.Path;
 import java.io.IOException;
-import java.lang.reflect.Field;
+import java.util.concurrent.Executors;
 
 /**
  * Remote HTTP implementation of the {@link Dispatcher}
+ * Serializes the command and sends it over HTTP POST to the configured targetUrl
  */
-public class RestHttpDispatcher extends AbstractRemoteDispatcher implements RemoteDispatcher {
+public class HttpDispatcher extends AbstractRemoteDispatcher implements RemoteDispatcher {
 
-	private static final Log LOGGER = LogFactory.getLog(RestHttpDispatcher.class);
+	private static final Log LOGGER = LogFactory.getLog(HttpDispatcher.class);
+	public static final int DEFAULT_THREAD_POOL_SIZE = 100;
 
-	private final CloseableHttpClient httpclient;
+	private final CloseableHttpClient httpClient;
 	private final String targetUrl;
 
-	public RestHttpDispatcher(final String targetUrl, final Serializer serializer) {
-		this(HttpClients.createDefault(), serializer, targetUrl);
+	public HttpDispatcher(final String targetUrl, final Serializer serializer) {
+		this(null, serializer, targetUrl, DEFAULT_THREAD_POOL_SIZE);
 	}
 
-	public RestHttpDispatcher(final CloseableHttpClient httpclient, final Serializer serializer,
-			final String targetUrl) {
+	public HttpDispatcher(final CloseableHttpClient httpClient, final Serializer serializer, final String targetUrl,
+			int threadPoolSize) {
 		super(serializer);
-		this.httpclient = httpclient;
+		if (httpClient == null) {
+			this.httpClient = createDefaultMultiThreadedClient(threadPoolSize);
+		} else {
+			this.httpClient = httpClient;
+		}
 		this.targetUrl = targetUrl;
+		this.setExecutorService(Executors.newFixedThreadPool(threadPoolSize));
+	}
+
+	private CloseableHttpClient createDefaultMultiThreadedClient(int threadPoolSize) {
+		PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager();
+		connManager.setMaxTotal(threadPoolSize);
+		connManager.setDefaultMaxPerRoute(threadPoolSize);
+		HttpClientBuilder httpClientBuilder = HttpClients.custom().setConnectionManager(connManager);
+		return httpClientBuilder.build();
 	}
 
 	@Override
@@ -58,7 +74,7 @@ public class RestHttpDispatcher extends AbstractRemoteDispatcher implements Remo
 			HttpRequestBase httpRequest = this.createRequest(command, textDispatcherCommand, timeout);
 			LOGGER.debug("Sending HTTP request of command: " + command.getCommandId() + " to:" + httpRequest.getURI()
 					.toString() + " Method:" + httpRequest.getMethod());
-			CloseableHttpResponse response = this.httpclient.execute(httpRequest);
+			CloseableHttpResponse response = httpClient.execute(httpRequest);
 			try {
 				return this.parseResponse(response, command);
 			} finally {
@@ -76,7 +92,7 @@ public class RestHttpDispatcher extends AbstractRemoteDispatcher implements Remo
 		HttpRequestBase request;
 		String requestPath = this.createHttpPath(command);
 		request = new HttpPost(requestPath);
-		ContentType contentType=ContentType.create(this.serializer.getContentType(), this.serializer.getCharset());
+		ContentType contentType = ContentType.create(this.serializer.getContentType(), this.serializer.getCharset());
 		request.setHeader(HttpHeaders.CONTENT_TYPE, contentType.toString());
 		((HttpPost) request).setEntity(new StringEntity(commandMessage.getTextCommand(), contentType));
 		for (String headerKey : commandMessage.getHeaders().keySet()) {
@@ -88,29 +104,8 @@ public class RestHttpDispatcher extends AbstractRemoteDispatcher implements Remo
 		return request;
 	}
 
-	//TODO: must test (or remove feature)
-	protected String createHttpPath(final Command<? extends Result> command) throws DispatchException {
-		Path pathAnnotation = command.getClass().getAnnotation(Path.class);
-		if (pathAnnotation != null) {
-			String pathTemplate = pathAnnotation.value();
-			if (pathTemplate.contains("{")) {
-				try {
-					for (Field field : command.getClass().getDeclaredFields()) {
-						if (pathTemplate.contains("{" + field.getName() + "}")) {
-							field.setAccessible(true);
-							pathTemplate = pathTemplate
-									.replaceAll("\\{" + field.getName() + "}", field.get(command).toString());
-							field.setAccessible(false);
-						}
-					}
-				} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
-					throw new DispatchException("Error while resolving http request path:" + e, e);
-				}
-			}
-			return this.targetUrl + pathTemplate;
-		} else {
-			return this.targetUrl + "/" + command.getClass().getName().replaceAll("\\.", "/");
-		}
+	protected String createHttpPath(final Command<? extends Result> command) {
+		return this.targetUrl + "/" + command.getClass().getName().replaceAll("\\.", "/");
 	}
 
 	protected TextDispatcherResult parseResponse(final CloseableHttpResponse httpResponse,
@@ -130,8 +125,8 @@ public class RestHttpDispatcher extends AbstractRemoteDispatcher implements Remo
 		}
 	}
 
-	public CloseableHttpClient getHttpclient() {
-		return httpclient;
+	public CloseableHttpClient getHttpClient() {
+		return httpClient;
 	}
 
 	public String getTargetUrl() {

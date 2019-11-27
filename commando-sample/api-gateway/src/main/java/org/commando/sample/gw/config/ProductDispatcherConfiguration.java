@@ -1,4 +1,4 @@
-package org.commando.sample.gw;
+package org.commando.sample.gw.config;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQQueue;
@@ -16,7 +16,7 @@ import javax.jms.DeliveryMode;
  * Configures the dispatcher of the module
  */
 @Configuration
-public class CommandoProductDispatcherConfiguration {
+public class ProductDispatcherConfiguration {
 
 	public static final String DEFAULT_BROKER_URL = "tcp://localhost:61616";
 

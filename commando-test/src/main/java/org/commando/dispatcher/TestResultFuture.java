@@ -16,7 +16,7 @@ public class TestResultFuture<R extends Result> extends ResultFuture<R> {
 	private final R result;
 
 	public TestResultFuture(R result) {
-		super(null, 0);
+		super(0);
 		this.result = result;
 	}
 

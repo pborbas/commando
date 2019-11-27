@@ -1,6 +1,6 @@
 package org.commando.spring.core.dispatcher;
 
-import org.commando.remote.http.dispatcher.RestHttpDispatcherFactory;
+import org.commando.remote.http.dispatcher.HttpDispatcherFactory;
 import org.commando.spring.core.dispatcher.serializer.SpringSerializerFactory;
 import org.commando.xml.serializer.XmlSerializerFactory;
 import org.junit.Assert;
@@ -32,8 +32,8 @@ public class SpringDispatcherFactoryTest {
         }
 
         @Bean
-        public RestHttpDispatcherFactory restHttpDispatcherFactory() {
-            return new RestHttpDispatcherFactory(springSerializerFactory());
+        public HttpDispatcherFactory restHttpDispatcherFactory() {
+            return new HttpDispatcherFactory(springSerializerFactory());
         }
 
         @Bean
@@ -54,7 +54,7 @@ public class SpringDispatcherFactoryTest {
         Assert.assertEquals(1, serializerFactory.getFactories().size());
         Assert.assertTrue(serializerFactory.getFactories().get(0) instanceof XmlSerializerFactory);
         Assert.assertEquals(1, dispatcherFactory.getFactories().size());
-        Assert.assertTrue(dispatcherFactory.getFactories().get(0) instanceof RestHttpDispatcherFactory);
+        Assert.assertTrue(dispatcherFactory.getFactories().get(0) instanceof HttpDispatcherFactory);
     }
 
 

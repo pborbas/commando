@@ -19,7 +19,12 @@ public class TextDispatcherCommand {
 	this.textCommand = textCommand;
     }
 
-    public String getTextCommand() {
+	public TextDispatcherCommand(String textCommand, Map<String, String> headers) {
+		this.textCommand = textCommand;
+		this.headers.putAll(headers);
+	}
+
+	public String getTextCommand() {
 	return this.textCommand;
     }
 

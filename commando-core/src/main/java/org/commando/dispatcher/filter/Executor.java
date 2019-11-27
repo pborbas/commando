@@ -5,9 +5,7 @@ import org.commando.exception.DispatchException;
 import org.commando.result.Result;
 
 /**
- * 
- * @author pborbas
- *
+ * Executes the command or delegates it to another dispatcher
  */
 public interface Executor {
     /**

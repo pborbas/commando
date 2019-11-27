@@ -1,13 +1,5 @@
 package org.commando.remote.jms.receiver;
 
-import java.util.Enumeration;
-
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.Session;
-import javax.jms.TextMessage;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.commando.dispatcher.Dispatcher;
@@ -19,6 +11,11 @@ import org.commando.remote.jms.dispatch.MessageCreator;
 import org.commando.remote.model.TextDispatcherCommand;
 import org.commando.remote.model.TextDispatcherResult;
 import org.commando.remote.receiver.CommandReceiver;
+
+import javax.jms.*;
+import java.util.Enumeration;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
 /**
  * Configure this as a message listener for the queue where you send commands
@@ -43,14 +40,16 @@ public class JmsCommandReceiverListener implements MessageListener {
     public void onMessage(final Message message) {
         try {
             TextDispatcherCommand commandMessage = this.parseReceivedMessage(message);
-            TextDispatcherResult resultMessage;
-            resultMessage = this.commandReceiver.execute(commandMessage);
-            if (resultMessage.getTextResult() == null) {
-                LOGGER.debug("Message processed, empty result, no need for response message");
-            } else {
-                this.sendResult(resultMessage, this.getResultTimeout(commandMessage));
-            }
-        } catch (DispatchException | JMSException e) {
+			CompletableFuture<TextDispatcherResult> textDispatcherResultCompletableFuture = this.commandReceiver.execute(commandMessage);
+			textDispatcherResultCompletableFuture.thenApply(result -> {
+				try {
+					this.sendResult(result, this.getResultTimeout(commandMessage));
+				} catch (Exception e) {
+					throw new CompletionException(e);
+				}
+				return result;
+			});
+        } catch (DispatchException e) {
             LOGGER.error("Error while dispatchig message received through JMS: " + e, e);
         }
     }

@@ -1,8 +1,11 @@
 package org.commando.remote.receiver;
 
 import org.commando.dispatcher.Dispatcher;
+import org.commando.exception.CommandSerializationException;
 import org.commando.remote.model.TextDispatcherCommand;
 import org.commando.remote.model.TextDispatcherResult;
+
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Can receive a remotely sent, serialized command and delegate it to the
@@ -20,7 +23,8 @@ public interface CommandReceiver {
      * @param commandMessage
      * @return
      */
-    TextDispatcherResult execute(TextDispatcherCommand commandMessage);
+    CompletableFuture<TextDispatcherResult> execute(TextDispatcherCommand commandMessage)
+			throws CommandSerializationException;
 
     long getTimeout();
 }

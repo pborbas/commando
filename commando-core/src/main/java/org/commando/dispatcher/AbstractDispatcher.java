@@ -14,17 +14,14 @@ import org.commando.result.ResultFuture;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.ForkJoinWorkerThread;
+import java.util.concurrent.*;
 
 /**
  * Common logic for all dispatcher implementations
  */
 public abstract class AbstractDispatcher implements Dispatcher {
 
-	protected final Log LOGGER;
+	protected final Log LOGGER; //initialized in constructor so it shows the right logger class
 
 	private ExecutorService executorService;
 	private final List<DispatchFilter> filters;
@@ -32,12 +29,12 @@ public abstract class AbstractDispatcher implements Dispatcher {
 	private SecurityContextManager securityContextManager = new NoopSecurityContextManager();
 
 	public AbstractDispatcher() {
-		this(new LinkedList<DispatchFilter>());
+		this(new LinkedList<>());
 	}
 
 	public AbstractDispatcher(final List<DispatchFilter> filters) {
 		super();
-		this.filters = new LinkedList<DispatchFilter>();
+		this.filters = new LinkedList<>();
 		this.filters.addAll(filters);
 		this.executorService = new ForkJoinPool();
 		this.timeout = DEFAULT_TIMEOUT;
@@ -52,13 +49,6 @@ public abstract class AbstractDispatcher implements Dispatcher {
 		this.securityContextManager = securityContextManager;
 	}
 
-	private static class WorkerThread extends ForkJoinWorkerThread {
-
-		public WorkerThread(ForkJoinPool pool) {
-			super(pool);
-		}
-	}
-
 	/**
 	 * The returned executor will be added to the end of the filter chain.
 	 */
@@ -66,33 +56,29 @@ public abstract class AbstractDispatcher implements Dispatcher {
 
 	@Override
 	public <C extends Command<R>, R extends Result> R dispatchSync(C dispatchCommand) throws DispatchException {
-		final ResultFuture<R> result = new ResultFuture<R>(this.getResultTimeout(dispatchCommand));
-		return this.executeCommonWorkflow(dispatchCommand, result);
+		return this.executeCommonWorkflow(dispatchCommand);
 	}
 
 	@Override
-	public <C extends Command<R>, R extends Result> ResultFuture<R> dispatch(final C dispatchCommand)
-			throws DispatchException {
+	public <C extends Command<R>, R extends Result> ResultFuture<R> dispatch(final C dispatchCommand) {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Passing command: " + dispatchCommand.getClass().getName() + ". ID: " + dispatchCommand
 					.getCommandId() + " to executor thread");
 		}
 		final ResultFuture<R> result = new ResultFuture<R>(this.getResultTimeout(dispatchCommand));
 		final Object securityContextInfo = this.securityContextManager.getSecurityContext();
-		result.setWrappedFuture(this.executorService.submit(new Callable<R>() {
-			@Override
-			public R call() throws Exception {
-				try {
-					securityContextManager.setSecurityContext(securityContextInfo);
-					return AbstractDispatcher.this.executeCommonWorkflow(dispatchCommand, result);
-				} catch (DispatchException | RuntimeException e) {
-					logException(e, dispatchCommand);
-					throw e;
-				} finally {
-					securityContextManager.clearSecurityContext();
-				}
+		ResultFuture.runAsync(() -> {
+			try {
+				securityContextManager.setSecurityContext(securityContextInfo);
+				R wfResult = AbstractDispatcher.this.executeCommonWorkflow(dispatchCommand);
+				result.complete(wfResult);
+			} catch (DispatchException | RuntimeException e) {
+				logException(e, dispatchCommand);
+				result.completeExceptionally(e);
+			} finally {
+				securityContextManager.clearSecurityContext();
 			}
-		}));
+		}, this.executorService);
 		return result;
 	}
 
@@ -110,9 +96,11 @@ public abstract class AbstractDispatcher implements Dispatcher {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <C extends Command<R>, R extends Result> R executeCommonWorkflow(final C dispatchCommand,
-			final DispatcherCallback callback) throws DispatchException {
-		LOGGER.debug("Execting command:" + dispatchCommand.getCommandType() + ". ID:" + dispatchCommand.getCommandId());
+	public <C extends Command<R>, R extends Result> R executeCommonWorkflow(final C dispatchCommand)
+			throws DispatchException {
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Executing command:" + dispatchCommand.getCommandType() + ". ID:" + dispatchCommand.getCommandId());
+		}
 		long start = System.currentTimeMillis();
 		R result;
 		try {
@@ -121,18 +109,16 @@ public abstract class AbstractDispatcher implements Dispatcher {
 			result.setCommandId(dispatchCommand.getCommandId());
 			String executionTime = new Long(System.currentTimeMillis() - start).toString();
 			this.addDefaultHeaders(result, executionTime);
-			callback.onSuccess(dispatchCommand, result);
-			LOGGER.debug(
-					"Finished command:" + dispatchCommand.getCommandType() + ". ID:" + dispatchCommand.getCommandId()
-							+ " (" + executionTime + "msec)");
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Finished command:" + dispatchCommand.getCommandType() + ". ID:" + dispatchCommand.getCommandId()
+						+ " (" + executionTime + "msec)");
+			}
 			return result;
 		} catch (DispatchException e) {
-			callback.onError(dispatchCommand, e);
 			throw e;
 		} catch (Throwable e) {
 			DispatchException dispatchException = new DispatchException("Unknown error while executing command:" + e,
 					e);
-			callback.onError(dispatchCommand, dispatchException);
 			throw dispatchException;
 		}
 	}
