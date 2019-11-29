@@ -12,7 +12,7 @@ public class ReactiveHttpDispatcherTest {
 
 	@Test
 	public void manualHttpCall() throws Exception {
-		ReactiveHttpDispatcher dispatcher = new ReactiveHttpDispatcher("https://localhost:8084/dispatcher/profile/",
+		ReactiveHttpDispatcher dispatcher = new ReactiveHttpDispatcher("http://localhost:8881/dispatcher/profile/",
 				new XmlSerializer());
 		SampleResult sampleResult = dispatcher.dispatch(new SampleCommand()).block();
 	}

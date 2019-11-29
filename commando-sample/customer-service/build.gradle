@@ -1,18 +1,27 @@
 plugins {
   id "org.springframework.boot" version "2.2.1.RELEASE"
 }
+configurations {
+    developmentOnly
+    runtimeClasspath {
+        extendsFrom developmentOnly
+    }
+}
 
 dependencies {
     api project(":customer-api")
 
-    api("io.github.pborbas.commando:commando-xml:"+commandoVersion)
-    api("io.github.pborbas.commando:commando-springboot-remote-http:"+commandoVersion)
+    implementation("io.github.pborbas.commando:commando-xml:"+commandoVersion)
+    implementation("io.github.pborbas.commando:commando-springboot-remote-http:"+commandoVersion)
 
-    api("org.springframework.boot:spring-boot-starter-webflux")
-    api("org.springframework.boot:spring-boot-starter-data-jpa")
-    
-    api("org.hsqldb:hsqldb")
-    
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+
+    implementation("org.hsqldb:hsqldb")
+
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
     testCompile("org.springframework.boot:spring-boot-starter-test")
 }
 

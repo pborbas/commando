@@ -26,19 +26,18 @@ public class CustomerController {
 
 	@RequestMapping(value = "/{customerId}", method = RequestMethod.GET)
 	public Mono<Customer> getCustomers(@PathVariable Long customerId) throws DispatchException {
-//		Mono<Customer> customerMono = Mono.fromFuture(this.customerDispatcher.dispatch(new GetCustomerCommand(customerId)))
-//				.map(customerResult -> customerResult.getValue());
-		return this.customerDispatcher.dispatch(new GetCustomerCommand(customerId)).map(customerResult -> customerResult.getValue());
+		return this.customerDispatcher.dispatch(new GetCustomerCommand(customerId))
+				.map(customerResult -> customerResult.getValue());
 	}
 
-//	@RequestMapping(method = RequestMethod.GET)
-//	public Mono<Customer> listCustomers() throws DispatchException {
-//		return this.customerDispatcher.dispatchSync(new ListCustomersCommand()).getCustomers();
-//	}
-//
-//	@RequestMapping(method = RequestMethod.POST)
-//	public Customer createCustomer(@RequestParam final String name) throws DispatchException {
-//		return this.customerDispatcher.dispatchSync(new CreateCustomerCommand(name)).getValue();
-//	}
+	//	@RequestMapping(method = RequestMethod.GET)
+	//	public Mono<Customer> listCustomers() throws DispatchException {
+	//		return this.customerDispatcher.dispatchSync(new ListCustomersCommand()).getCustomers();
+	//	}
+	//
+	//	@RequestMapping(method = RequestMethod.POST)
+	//	public Customer createCustomer(@RequestParam final String name) throws DispatchException {
+	//		return this.customerDispatcher.dispatchSync(new CreateCustomerCommand(name)).getValue();
+	//	}
 
 }

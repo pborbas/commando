@@ -7,7 +7,7 @@ import org.commando.dispatcher.AbstractDispatcher;
 import org.commando.dispatcher.filter.Executor;
 import org.commando.exception.CommandSerializationException;
 import org.commando.exception.DispatchException;
-import org.commando.exception.ExceptionUtil;
+import org.commando.remote.exception.RemoteExceptionUtil;
 import org.commando.remote.model.TextDispatcherCommand;
 import org.commando.remote.model.TextDispatcherResult;
 import org.commando.remote.serializer.Serializer;
@@ -45,10 +45,10 @@ public abstract class AbstractRemoteDispatcher extends AbstractDispatcher implem
 
     protected <C extends Command<R>, R extends Result> R parseResult(final C command, final TextDispatcherResult textDispatcherResult) throws DispatchException {
         LOGGER.debug("Parsing result after remote execution: "+textDispatcherResult.toString(LOGGER.isDebugEnabled()));
-        if (textDispatcherResult.getHeader(RemoteDispatcher.HEADER_RESULT_EXCEPTION_CLASS) != null) {
-            LOGGER.warn("Result contains exception headers");
-            //TODO: fix it: we always run to parse error on exceptions
-            throw ExceptionUtil.instantiateDispatchException(textDispatcherResult.getHeader(RemoteDispatcher.HEADER_RESULT_EXCEPTION_CLASS), textDispatcherResult.getTextResult());
+		String exceptionClass = textDispatcherResult.getHeader(RemoteDispatcher.HEADER_RESULT_EXCEPTION_CLASS);
+		if (exceptionClass != null) {
+            throw RemoteExceptionUtil.convertToException(textDispatcherResult.getTextResult(),
+					exceptionClass);
         }
         R dispatchResult;
         if (CommandUtil.isNoResultCommand(command)) {

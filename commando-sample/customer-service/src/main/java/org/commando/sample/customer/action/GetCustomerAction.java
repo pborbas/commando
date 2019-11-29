@@ -4,6 +4,7 @@ import org.commando.action.AbstractAction;
 import org.commando.exception.DispatchException;
 import org.commando.sample.customer.api.command.CustomerResult;
 import org.commando.sample.customer.api.command.GetCustomerCommand;
+import org.commando.sample.customer.api.exception.CustomerNotFoundException;
 import org.commando.sample.customer.api.model.Customer;
 import org.commando.sample.customer.repo.CustomerRepository;
 import org.commando.spring.core.action.DispatchAction;
@@ -25,6 +26,9 @@ public class GetCustomerAction extends AbstractAction<GetCustomerCommand, Custom
 	@Override
 	public CustomerResult execute(GetCustomerCommand command) throws DispatchException {
 		//		Customer customer = this.customerRepository.findOne(command.getCustomerId());
+		if (command.getCustomerId()>100) {
+			throw new CustomerNotFoundException("Customer with id: "+command.getCustomerId()+" not found. Use id<100 for success results");
+		}
 		Customer customer = new Customer(command.getCustomerId(), "John Smith");
 		try {
 			Thread.sleep(100);

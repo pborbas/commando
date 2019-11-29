@@ -42,6 +42,9 @@ public class DefaultCommandReceiver implements CommandReceiver {
 					} catch (CommandSerializationException e) {
 						return createErrorResultMessage(command, e);
 					}
+				}).exceptionally(e -> {
+					TextDispatcherResult errorResultMessage = createErrorResultMessage(command, e.getCause());
+					return errorResultMessage;
 				});
 		return textDispatcherResultCompletableFuture;
 	}

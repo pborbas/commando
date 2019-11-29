@@ -1,3 +1,5 @@
 dependencies {
 	api project(':commando-core')
+    testCompile project(':commando-test')
+    testCompile project(':commando-testbase')
 }
