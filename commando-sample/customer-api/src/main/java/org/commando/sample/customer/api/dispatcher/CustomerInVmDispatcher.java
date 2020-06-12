@@ -1,9 +1,9 @@
 package org.commando.sample.customer.api.dispatcher;
 
-import org.commando.spring.core.dispatcher.SpringInVmDispatcher;
+import org.commando.core.reactive.dispatcher.ReactiveInVmDispatcher;
 
 /**
  *
  */
-public class CustomerInVmDispatcher extends SpringInVmDispatcher {
+public class CustomerInVmDispatcher extends ReactiveInVmDispatcher {
 }

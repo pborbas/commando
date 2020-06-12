@@ -29,7 +29,7 @@ public class XmlSerializer implements Serializer {
 		try {
 			return (Result) this.xstream.fromXML(textResult);
 		} catch (Exception e) {
-			throw new CommandSerializationException("Cannot parse text to Result: " + textResult, e);
+			throw new CommandSerializationException("Cannot parse text to Result: " + textResult);
 		}
 	}
 

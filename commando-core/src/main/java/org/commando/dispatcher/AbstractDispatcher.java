@@ -55,8 +55,8 @@ public abstract class AbstractDispatcher implements Dispatcher {
 	protected abstract Executor getExecutor();
 
 	@Override
-	public <C extends Command<R>, R extends Result> R dispatchSync(C dispatchCommand) throws DispatchException {
-		return this.executeCommonWorkflow(dispatchCommand);
+	public <C extends Command<R>, R extends Result> R dispatchSync(C command) throws DispatchException {
+		return this.executeCommonWorkflow(command);
 	}
 
 	@Override
@@ -86,8 +86,8 @@ public abstract class AbstractDispatcher implements Dispatcher {
 		LOGGER.error("Error while executing command: " + dispatchCommand.getClass() + ": " + e, e);
 	}
 
-	protected long getResultTimeout(final Command dispatchCommand) {
-		String timeoutHeader = dispatchCommand.getHeader(HEADER_TIMEOUT);
+	protected long getResultTimeout(final Command command) {
+		String timeoutHeader = command.getHeader(HEADER_TIMEOUT);
 		Long receivedTimeout = (timeoutHeader != null) ? Long.valueOf(timeoutHeader) : null;
 		if (receivedTimeout != null && receivedTimeout < this.timeout) {
 			return receivedTimeout;
@@ -96,21 +96,21 @@ public abstract class AbstractDispatcher implements Dispatcher {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <C extends Command<R>, R extends Result> R executeCommonWorkflow(final C dispatchCommand)
+	public <C extends Command<R>, R extends Result> R executeCommonWorkflow(final C command)
 			throws DispatchException {
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Executing command:" + dispatchCommand.getCommandType() + ". ID:" + dispatchCommand.getCommandId());
+			LOGGER.debug("Executing command:" + command.getCommandType() + ". ID:" + command.getCommandId());
 		}
 		long start = System.currentTimeMillis();
 		R result;
 		try {
-			this.addDefaultHeaders(dispatchCommand);
-			result = new DefaultDispatchFilterChain(this.filters, this.getExecutor()).filter(dispatchCommand);
-			result.setCommandId(dispatchCommand.getCommandId());
+			this.addDefaultHeaders(command);
+			result = new DefaultDispatchFilterChain(this.filters, this.getExecutor()).filter(command);
+			result.setCommandId(command.getCommandId());
 			String executionTime = new Long(System.currentTimeMillis() - start).toString();
 			this.addDefaultHeaders(result, executionTime);
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("Finished command:" + dispatchCommand.getCommandType() + ". ID:" + dispatchCommand.getCommandId()
+				LOGGER.debug("Finished command:" + command.getCommandType() + ". ID:" + command.getCommandId()
 						+ " (" + executionTime + "msec)");
 			}
 			return result;

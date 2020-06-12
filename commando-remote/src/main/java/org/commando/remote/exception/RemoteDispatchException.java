@@ -15,7 +15,7 @@ public class RemoteDispatchException extends DispatchException {
         super(message);
     }
 
-    public RemoteDispatchException(final String message, final Exception e) {
+    public RemoteDispatchException(final String message, final Throwable e) {
         super(message, e);
     }
 

@@ -13,8 +13,9 @@ dependencies {
 
     implementation("io.github.pborbas.commando:commando-xml:"+commandoVersion)
     implementation("io.github.pborbas.commando:commando-springboot-remote-http:"+commandoVersion)
+    implementation("io.github.pborbas.commando:commando-core-reactive:"+commandoVersion)
 
-    implementation 'org.springframework.boot:spring-boot-starter-web'
+//    implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 

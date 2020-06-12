@@ -19,11 +19,6 @@ subprojects {
        mavenCentral()
     }
 
-    // dependencies {
-    //  	compile 'commons-logging:commons-logging:1.2+'
-    //    	testCompile 'junit:junit:4.11'
-    // }
-
     jar {
         manifest.attributes provider: 'Peter Borbas'
     }
