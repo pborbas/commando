@@ -29,13 +29,13 @@ public class DefaultReactiveCommandReceiver implements ReactiveCommandReceiver {
 	@Override
 	public Mono<TextDispatcherResult> execute(final TextDispatcherCommand textDispatcherCommand)
 			throws DispatchException {
-		LOGGER.debug("Command received: " + textDispatcherCommand.toString(LOGGER.isDebugEnabled()));
+		LOGGER.debug("Command received. " + textDispatcherCommand.toString(LOGGER.isTraceEnabled()));
 		Command command = this.convertRequest(textDispatcherCommand); //TODO: reactive: add as reactive step
 		Mono<Result> resultMono = this.dispatcher.dispatch(command);
 		return resultMono.map(result -> {
 			try {
 				TextDispatcherResult textDispatcherResult = convertResult(result);
-				LOGGER.debug("Response created:"+textDispatcherResult.toString(LOGGER.isDebugEnabled()));
+				LOGGER.debug("Response created. "+textDispatcherResult.toString(LOGGER.isTraceEnabled()));
 				return textDispatcherResult;
 			} catch (CommandSerializationException e) {
 				return createErrorResultMessage(command, e);

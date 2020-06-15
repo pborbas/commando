@@ -9,15 +9,22 @@ public class AbstractCommandTest {
 
     @SuppressWarnings("serial")
     private class TestCommand extends AbstractCommand<SampleResult> {
+		public TestCommand() {
+		}
 
-        public TestCommand(String commandId) {
-            super(commandId);
-        }
-    }
+		public TestCommand(String commandId) {
+			super(commandId);
+		}
+
+		public TestCommand(Command parentCommand) {
+			super(parentCommand);
+		}
+	}
 
     @Test(expected = IllegalArgumentException.class)
     public void testCommandMustHaveCommandId() {
-        new TestCommand(null);
+    	String id=null;
+        new TestCommand(id);
     }
 
     @Test
@@ -45,4 +52,19 @@ public class AbstractCommandTest {
         Assert.assertNotEquals(command1a.hashCode(), sampleCommand.hashCode());
     }
 
+	@Test
+	public void commandInheritsFromParent() {
+    	TestCommand origin = new TestCommand();
+    	origin.setSystem("origin");
+    	origin.setOriginSystem("origin");
+    	TestCommand parent = new TestCommand(origin);
+    	parent.setSystem("parent");
+    	TestCommand current = new TestCommand(parent);
+		current.setSystem("current");
+    	Assert.assertEquals(origin.getSystem(), current.getOriginSystem());
+    	Assert.assertEquals(origin.getCommandId(), current.getOriginId());
+    	Assert.assertEquals(parent.getSystem(), current.getParentSystem());
+    	Assert.assertEquals(parent.getCommandId(), current.getParentId());
+		System.out.println(current);
+	}
 }

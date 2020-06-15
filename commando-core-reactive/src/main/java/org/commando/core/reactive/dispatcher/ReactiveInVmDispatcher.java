@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutorService;
 /**
  *
  */
-public class ReactiveInVmDispatcher<A extends ReactiveAction> implements ReactiveDispatcher {
+public class ReactiveInVmDispatcher<A extends ReactiveAction> extends AbstractReactiveDispatcher implements ReactiveExecutor {
 
 	private static final Log LOG = LogFactory.getLog(ReactiveInVmDispatcher.class);
 	private Map<String, A> actionsMap = new HashMap<>();
@@ -28,6 +28,11 @@ public class ReactiveInVmDispatcher<A extends ReactiveAction> implements Reactiv
 
 	public ReactiveInVmDispatcher() {
 		this.scheduler = Schedulers.parallel();
+	}
+
+	@Override
+	protected ReactiveExecutor getExecutor() {
+		return this;
 	}
 
 	public ReactiveInVmDispatcher(Scheduler scheduler) {
@@ -39,8 +44,12 @@ public class ReactiveInVmDispatcher<A extends ReactiveAction> implements Reactiv
 	}
 
 	@Override
-	public <C extends Command<R>, R extends Result> Mono<R> dispatch(C command) throws DispatchException {
-		return this.findAction(command).execute(command).publishOn(this.scheduler);
+	public <C extends Command<R>, R extends Result> Mono<R> execute(C command) {
+		try {
+			return this.findAction(command).execute(command).publishOn(this.scheduler);
+		} catch (DispatchException e) {
+			return Mono.error(e);
+		}
 	}
 
 	public void setActions(final List<A> actions) throws DuplicateActionException {
@@ -66,6 +75,5 @@ public class ReactiveInVmDispatcher<A extends ReactiveAction> implements Reactiv
 		}
 		throw new ActionNotFoundException("Action not found for command:" + command);
 	}
-
 
 }

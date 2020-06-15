@@ -48,9 +48,9 @@ public class ReactiveTextDispatcherResult extends TextDispatcherResult {
 		return this.getTextResult();
 	}
 
-	public String toString(boolean debug) {
+	public String toString(boolean showContent) {
 		String result = toString();
-		if (debug) {
+		if (showContent) {
 			result += "\nHeaders:";
 			for (String headerName : headers.keySet()) {
 				result += "\n " + headerName + "=" + headers.get(headerName);

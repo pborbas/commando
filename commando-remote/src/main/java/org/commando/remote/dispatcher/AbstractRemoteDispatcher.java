@@ -38,13 +38,13 @@ public abstract class AbstractRemoteDispatcher extends AbstractDispatcher implem
     @Override
 	public <C extends Command<R>, R extends Result> R execute(C dispatchCommand) throws DispatchException{
         TextDispatcherCommand textDispatcherCommand=this.serializeCommand(dispatchCommand);
-		LOGGER.debug("Executing remote command: "+textDispatcherCommand.toString(LOGGER.isDebugEnabled()));
+		LOGGER.debug("Executing remote command: "+textDispatcherCommand.toString(LOGGER.isTraceEnabled()));
         TextDispatcherResult textDispatcherResult=this.executeRemote(dispatchCommand, textDispatcherCommand, this.getTimeout());
         return this.parseResult(dispatchCommand, textDispatcherResult);
     }
 
     protected <C extends Command<R>, R extends Result> R parseResult(final C command, final TextDispatcherResult textDispatcherResult) throws DispatchException {
-        LOGGER.debug("Parsing result after remote execution: "+textDispatcherResult.toString(LOGGER.isDebugEnabled()));
+        LOGGER.debug("Parsing result after remote execution: "+textDispatcherResult.toString(LOGGER.isTraceEnabled()));
 		String exceptionClass = textDispatcherResult.getHeader(RemoteDispatcher.HEADER_RESULT_EXCEPTION_CLASS);
 		if (exceptionClass != null) {
             throw RemoteExceptionUtil.convertToException(textDispatcherResult.getTextResult(),

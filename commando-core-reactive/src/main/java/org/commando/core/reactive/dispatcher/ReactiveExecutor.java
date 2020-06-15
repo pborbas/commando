@@ -13,6 +13,6 @@ public interface ReactiveExecutor {
      * 
      */
     @SuppressWarnings("rawtypes")
-	<C extends Command<R>, R extends Result> Mono<R> execute(C command);
+	<C extends Command<R>, R extends Result> Mono<R> execute(C command);// throws DispatchException;
 
 }

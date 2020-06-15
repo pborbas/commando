@@ -27,10 +27,38 @@ public interface Command<R extends Result> extends Serializable {
      */
     Class<?> getCommandType();
 
-    /**
-     * Unique command Id
-     */
+	/**
+	 * Where the command was created
+	 * @return
+	 */
+    String getSystem();
+	Command<R> setSystem(String system);
+
+		/**
+		 * Unique command Id
+		 */
     String getCommandId();
+	/**
+	 * Where the parent command was created
+	 * @return
+	 */
+	String getParentSystem();
+	/**
+	 * Parent command id. If a command was created during the execution of a parent command.
+	 * @return
+	 */
+	String getParentId();
+
+	/**
+	 * Where the origin command was created
+	 * @return
+	 */
+	String getOriginSystem();
+	/**
+	 * Origin command id. The first command's id in the chain. With this we can track down an execution flow among multiple services
+	 * @return
+	 */
+    String getOriginId();
 
 	public String getHeader(final String headerName);
 

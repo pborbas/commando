@@ -45,15 +45,16 @@ public class TextDispatcherResult {
 		return textResult;
 	}
 
-	public String toString(boolean debug) {
-		String result=toString();
-		if (debug) {
+	public String toString(boolean showContent) {
+		if (showContent) {
+			String result=toString();
 			result+="\nHeaders:";
 			for (String headerName:headers.keySet()) {
 				result+="\n "+headerName+"="+headers.get(headerName);
 			}
+			return result;
 		}
-		return result;
+		return "Content hidden.";
 	}
 
 }

@@ -2,6 +2,7 @@ package org.commando.dispatcher;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.commando.command.AbstractCommand;
 import org.commando.command.Command;
 import org.commando.dispatcher.filter.DefaultDispatchFilterChain;
 import org.commando.dispatcher.filter.DispatchFilter;
@@ -26,6 +27,7 @@ public abstract class AbstractDispatcher implements Dispatcher {
 	private ExecutorService executorService;
 	private final List<DispatchFilter> filters;
 	private Long timeout;
+	private String system = AbstractCommand.NOT_AVAILABLE;
 	private SecurityContextManager securityContextManager = new NoopSecurityContextManager();
 
 	public AbstractDispatcher() {
@@ -62,8 +64,10 @@ public abstract class AbstractDispatcher implements Dispatcher {
 	@Override
 	public <C extends Command<R>, R extends Result> ResultFuture<R> dispatch(final C command) {
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Passing command: " + command.getClass().getName() + ". ID: " + command
-					.getCommandId() + " to executor thread");
+			LOGGER.debug("Passing command to executor thread. " + command);
+		}
+		if (AbstractCommand.NOT_AVAILABLE.equals(command.getSystem())) {
+			command.setSystem(this.system);
 		}
 		final ResultFuture<R> result = new ResultFuture<R>(this.getResultTimeout(command));
 		final Object securityContextInfo = this.securityContextManager.getSecurityContext();
@@ -99,7 +103,7 @@ public abstract class AbstractDispatcher implements Dispatcher {
 	public <C extends Command<R>, R extends Result> R executeCommonWorkflow(final C command)
 			throws DispatchException {
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Executing command:" + command.getCommandType() + ". ID:" + command.getCommandId());
+			LOGGER.debug("Executing command." + command);
 		}
 		long start = System.currentTimeMillis();
 		R result;
@@ -110,8 +114,7 @@ public abstract class AbstractDispatcher implements Dispatcher {
 			String executionTime = new Long(System.currentTimeMillis() - start).toString();
 			this.addDefaultHeaders(result, executionTime);
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("Finished command:" + command.getCommandType() + ". ID:" + command.getCommandId()
-						+ " (" + executionTime + "msec)");
+				LOGGER.debug("Finished command in " + executionTime + "msecs. "+command);
 			}
 			return result;
 		} catch (DispatchException e) {
@@ -168,4 +171,12 @@ public abstract class AbstractDispatcher implements Dispatcher {
 		return info;
 	}
 
+	public String getSystem() {
+		return system;
+	}
+
+	public AbstractDispatcher setSystem(String system) {
+		this.system = system;
+		return this;
+	}
 }

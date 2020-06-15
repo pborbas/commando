@@ -30,14 +30,14 @@ public class DefaultCommandReceiver implements CommandReceiver {
 	@Override
 	public CompletableFuture<TextDispatcherResult> execute(final TextDispatcherCommand textDispatcherCommand)
 			throws CommandSerializationException {
-		LOGGER.debug("Command received: " + textDispatcherCommand.toString(LOGGER.isDebugEnabled()));
+		LOGGER.debug("Command received: " + textDispatcherCommand.toString(LOGGER.isTraceEnabled()));
 		Command command = this.convertRequest(textDispatcherCommand);
 		ResultFuture<Result> dispatchFuture = this.dispatcher.dispatch(command);
 		CompletableFuture<TextDispatcherResult> textDispatcherResultCompletableFuture = dispatchFuture
 				.thenApply(result -> {
 					try {
 						TextDispatcherResult textDispatcherResult = convertResult(result);
-						LOGGER.debug("Response created:"+textDispatcherResult.toString(LOGGER.isDebugEnabled()));
+						LOGGER.debug("Response created:"+textDispatcherResult.toString(LOGGER.isTraceEnabled()));
 						return textDispatcherResult;
 					} catch (CommandSerializationException e) {
 						return createErrorResultMessage(command, e);
