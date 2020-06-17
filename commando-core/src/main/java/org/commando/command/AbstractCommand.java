@@ -132,7 +132,7 @@ public abstract class AbstractCommand<R extends Result> implements Command<R> {
 
 	@Override
 	public String toString() {
-		return "{\""+getCommandType()+"\":{"
+		return "{\""+getCommandType().getSimpleName()+"\":{"
 				+ "\"origin\":\"" + originSystem + "\""
 				+ ", \"originId\":\"" + originId + "\""
 				+ ", \"parent\":\"" + parentSystem + "\""

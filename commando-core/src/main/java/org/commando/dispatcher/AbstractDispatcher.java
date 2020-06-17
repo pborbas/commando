@@ -7,6 +7,7 @@ import org.commando.command.Command;
 import org.commando.dispatcher.filter.DefaultDispatchFilterChain;
 import org.commando.dispatcher.filter.DispatchFilter;
 import org.commando.dispatcher.filter.Executor;
+import org.commando.dispatcher.filter.metrics.DispatcherMetrics;
 import org.commando.dispatcher.security.NoopSecurityContextManager;
 import org.commando.dispatcher.security.SecurityContextManager;
 import org.commando.exception.DispatchException;
@@ -15,7 +16,8 @@ import org.commando.result.ResultFuture;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ForkJoinPool;
 
 /**
  * Common logic for all dispatcher implementations
@@ -29,6 +31,7 @@ public abstract class AbstractDispatcher implements Dispatcher {
 	private Long timeout;
 	private String system = AbstractCommand.NOT_AVAILABLE;
 	private SecurityContextManager securityContextManager = new NoopSecurityContextManager();
+	private final DispatcherMetrics metrics = new DispatcherMetrics();
 
 	public AbstractDispatcher() {
 		this(new LinkedList<>());
@@ -63,9 +66,6 @@ public abstract class AbstractDispatcher implements Dispatcher {
 
 	@Override
 	public <C extends Command<R>, R extends Result> ResultFuture<R> dispatch(final C command) {
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Passing command to executor thread. " + command);
-		}
 		if (AbstractCommand.NOT_AVAILABLE.equals(command.getSystem())) {
 			command.setSystem(this.system);
 		}
@@ -111,16 +111,16 @@ public abstract class AbstractDispatcher implements Dispatcher {
 			this.addDefaultHeaders(command);
 			result = new DefaultDispatchFilterChain(this.filters, this.getExecutor()).filter(command);
 			result.setCommandId(command.getCommandId());
-			String executionTime = new Long(System.currentTimeMillis() - start).toString();
-			this.addDefaultHeaders(result, executionTime);
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("Finished command in " + executionTime + "msecs. "+command);
-			}
+			Long executionTime = new Long(System.currentTimeMillis() - start);
+			this.addDefaultHeaders(result, executionTime.toString());
+			LOGGER.info("Finished command in " + executionTime + "msecs. "+command);
+			metrics.success(command, executionTime);
 			return result;
 		} catch (DispatchException e) {
 			throw e;
 		} catch (Throwable e) {
-			DispatchException dispatchException = new DispatchException("Unknown error while executing command:" + e,
+			metrics.error(command);
+			DispatchException dispatchException = new DispatchException("Error while executing command:" + command + ". Message: " + e,
 					e);
 			throw dispatchException;
 		}
@@ -178,5 +178,9 @@ public abstract class AbstractDispatcher implements Dispatcher {
 	public AbstractDispatcher setSystem(String system) {
 		this.system = system;
 		return this;
+	}
+
+	public DispatcherMetrics getMetrics() {
+		return metrics;
 	}
 }

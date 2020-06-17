@@ -6,6 +6,7 @@ import org.commando.command.AbstractCommand;
 import org.commando.command.Command;
 import org.commando.dispatcher.Dispatcher;
 import org.commando.dispatcher.filter.CommandFilter;
+import org.commando.dispatcher.filter.metrics.DispatcherMetrics;
 import org.commando.dispatcher.security.NoopSecurityContextManager;
 import org.commando.dispatcher.security.SecurityContextManager;
 import org.commando.exception.DispatchException;
@@ -28,6 +29,7 @@ public abstract class AbstractReactiveDispatcher implements ReactiveDispatcher {
 	private String system = AbstractCommand.NOT_AVAILABLE;
 	private final List<CommandFilter> commandFilters = new LinkedList<>();
 	private SecurityContextManager securityContextManager = new NoopSecurityContextManager();
+	private final DispatcherMetrics metrics = new DispatcherMetrics();
 
 	public AbstractReactiveDispatcher() {
 		super();
@@ -56,29 +58,31 @@ public abstract class AbstractReactiveDispatcher implements ReactiveDispatcher {
 				command.setSystem(this.system);
 			}
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("Executing command. "+command);
+				LOGGER.debug("Executing command. " + command);
 			}
 			final long start = System.currentTimeMillis();
-			for (CommandFilter filter:this.commandFilters) {
+			for (CommandFilter filter : this.commandFilters) {
 				command = filter.filter(command);
-				LOGGER.debug("Filter applied on command: "+filter.getClass().getName());
+				LOGGER.debug("Filter applied on command: " + filter.getClass().getName());
 			}
 			final C filteredCommand = command;
 			this.addDefaultHeaders(command);
 			Mono<R> resultMono = this.getExecutor().execute(command);
 			return resultMono.flatMap(result -> {
 				result.setCommandId(filteredCommand.getCommandId());
-				String executionTime = new Long(System.currentTimeMillis() - start).toString();
-				this.addDefaultHeaders(result, executionTime);
-				if (LOGGER.isDebugEnabled()) {
-					LOGGER.debug("Finished command in "
-							+ executionTime + "msec. "+filteredCommand);
-				}
+				Long executionTime = new Long(System.currentTimeMillis() - start);
+				this.addDefaultHeaders(result, executionTime.toString());
+				LOGGER.info("Finished command in " + executionTime + "msec. " + filteredCommand);
 				//TODO: reactive: clear security context
+				metrics.success(filteredCommand, executionTime);
 				return Mono.just(result);
 			});
 		} catch (DispatchException e) {
+			metrics.error(command);
 			return Mono.error(e);
+		}catch (Throwable e) {
+			metrics.error(command);
+			return Mono.error(new DispatchException("Error while executing command:" + command + ". Message: " + e,	e));
 		}
 	}
 
@@ -128,5 +132,9 @@ public abstract class AbstractReactiveDispatcher implements ReactiveDispatcher {
 	public AbstractReactiveDispatcher setSystem(String system) {
 		this.system = system;
 		return this;
+	}
+
+	public DispatcherMetrics getMetrics() {
+		return metrics;
 	}
 }

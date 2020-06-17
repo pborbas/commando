@@ -3,7 +3,7 @@ package org.commando.spring.boot.actuator.metrics;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.binder.MeterBinder;
 import org.commando.dispatcher.MetricsDispatcher;
-import org.commando.dispatcher.filter.metrics.MetricsFilter;
+import org.commando.dispatcher.filter.metrics.DispatcherMetrics.Metric;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,9 +24,9 @@ public class DispatcherMetrics implements MeterBinder {
 	}
 
 	private void addMetrics(MeterRegistry registry, MetricsDispatcher metricsDispatcher) {
-		MetricsFilter.Metric metric;
+		Metric metric;
 		Class<? extends MetricsDispatcher> dispatcherClass = metricsDispatcher.getClass();
-		Map<Class, MetricsFilter.Metric> dispatcherMetrics = metricsDispatcher.getMetrics();
+		Map<Class, Metric> dispatcherMetrics = metricsDispatcher.getMetrics();
 		for (Class commandClass : dispatcherMetrics.keySet()) {
 			metric = dispatcherMetrics.get(commandClass);
 			String baseName = "dispatcher." + dispatcherClass.getSimpleName() + "." + commandClass.getSimpleName();
