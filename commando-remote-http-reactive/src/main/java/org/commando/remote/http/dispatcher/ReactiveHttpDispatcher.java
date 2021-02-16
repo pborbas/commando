@@ -88,7 +88,7 @@ public class ReactiveHttpDispatcher extends AbstractReactiveDispatcher implement
 								if (exceptionClassName != null) {
 									sink.error(RemoteExceptionUtil.convertToException(textResult, exceptionClassName));
 								} else {
-									metrics.error(command);
+									getMetrics().error(command);
 									try {
 										R result = (R) this.serializer.toResult(textResult);
 										result.getHeaders().putAll(textDispatcherResult.getHeaders());
