@@ -76,14 +76,21 @@ public abstract class AbstractReactiveDispatcher implements ReactiveDispatcher {
 				//TODO: reactive: clear security context
 				metrics.success(filteredCommand, executionTime);
 				return Mono.just(result);
+			}).doOnError(e -> {
+				logException(e, filteredCommand);
 			});
 		} catch (DispatchException e) {
+			logException(e, command);
 			metrics.error(command);
 			return Mono.error(e);
 		}catch (Throwable e) {
+			logException(e, command);
 			metrics.error(command);
 			return Mono.error(new DispatchException("Error while executing command:" + command + ". Message: " + e,	e));
 		}
+	}
+	protected void logException(Throwable e, Command dispatchCommand) {
+		LOGGER.error("Error while executing command: " + dispatchCommand + ": " + e, e);
 	}
 
 	public void addCommandFilter(final CommandFilter filter) {

@@ -40,6 +40,9 @@ public class DefaultReactiveCommandReceiver implements ReactiveCommandReceiver {
 			} catch (CommandSerializationException e) {
 				return createErrorResultMessage(command, e);
 			}
+		}).onErrorResume(e -> {
+
+			return Mono.just(createErrorResultMessage(command, e));
 		});
 	}
 

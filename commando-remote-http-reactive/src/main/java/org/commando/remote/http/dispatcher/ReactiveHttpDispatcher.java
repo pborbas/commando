@@ -2,6 +2,7 @@ package org.commando.remote.http.dispatcher;
 
 import io.netty.channel.ChannelOption;
 import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.commando.command.Command;
@@ -12,6 +13,7 @@ import org.commando.exception.CommandSerializationException;
 import org.commando.remote.dispatcher.RemoteDispatcher;
 import org.commando.remote.exception.RemoteDispatchException;
 import org.commando.remote.exception.RemoteExceptionUtil;
+import org.commando.remote.http.exception.*;
 import org.commando.remote.model.TextDispatcherCommand;
 import org.commando.remote.model.TextDispatcherResult;
 import org.commando.remote.serializer.Serializer;
@@ -63,7 +65,11 @@ public class ReactiveHttpDispatcher extends AbstractReactiveDispatcher implement
 							tcpClient -> tcpClient //
 									.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, timeout)) //
 					//									.option(ChannelOption.SO_TIMEOUT, timeout.intValue())) //
-					.headers(headers -> {
+					.doOnResponseError((response, t) -> {
+						LOGGER.error("Error HTTP response: " + response + ". Message: " + t.getMessage(), t);
+					}).doOnRequestError((request, t) -> {
+						LOGGER.error("Error HTTP request: " + request + ". Message: " + t.getMessage(), t);
+					}).headers(headers -> {
 						for (String headerKey : textDispatcherCommand.getHeaders().keySet()) {
 							headers.set(headerKey, textDispatcherCommand.getHeaders().get(headerKey));
 						}
@@ -73,30 +79,61 @@ public class ReactiveHttpDispatcher extends AbstractReactiveDispatcher implement
 					.send(ByteBufFlux.fromString(Mono.just(textDispatcherCommand.getTextCommand())))
 					.responseSingle((resp, bytes) -> {
 						TextDispatcherResult textDispatcherResult = toEmptyResultWithHeaders(command, resp);
-						return bytes.handle((responseBody, sink) -> {
-							String textResult = responseBody.readCharSequence(responseBody.readableBytes(), charset)
-									.toString();
-							String exceptionClassName = textDispatcherResult
-									.getHeader(RemoteDispatcher.HEADER_RESULT_EXCEPTION_CLASS);
-							if (exceptionClassName != null) {
-								sink.error(RemoteExceptionUtil.convertToException(textResult, exceptionClassName));
-							} else {
-								try {
-									R result = (R) this.serializer.toResult(textResult);
-									result.getHeaders().putAll(textDispatcherResult.getHeaders());
-									sink.next(result);
-								} catch (Throwable e) {
-									sink.error(new RemoteDispatchException(textResult, e));
+						if (HttpResponseStatus.OK.equals(resp.status())) {
+							return bytes.handle((responseBody, sink) -> {
+								String textResult = responseBody.readCharSequence(responseBody.readableBytes(), charset)
+										.toString();
+								String exceptionClassName = textDispatcherResult
+										.getHeader(RemoteDispatcher.HEADER_RESULT_EXCEPTION_CLASS);
+								if (exceptionClassName != null) {
+									sink.error(RemoteExceptionUtil.convertToException(textResult, exceptionClassName));
+								} else {
+									metrics.error(command);
+									try {
+										R result = (R) this.serializer.toResult(textResult);
+										result.getHeaders().putAll(textDispatcherResult.getHeaders());
+										sink.next(result);
+									} catch (Throwable e) {
+										sink.error(new RemoteDispatchException(textResult, e));
+									}
 								}
-							}
-						});
+							});
+						} else if (resp.status().code() == 301 || resp.status().code() == 302) {
+							return Mono.error(new RemoteDispatchException(
+									"Unexpected redirect. Status: " + resp.status() + " with location: "
+											+ textDispatcherResult.getHeader("Location")));
+						} else if (resp.status().code() == 400) {
+							return Mono.error(new BadRequestException(
+									"Status: " + resp.status() + " with body: " + textDispatcherResult
+											.getTextResult()));
+						} else if (resp.status().code() == 401) {
+							return Mono.error(new UnauthenticatedException(
+									"Status: " + resp.status() + " with body: " + textDispatcherResult
+											.getTextResult()));
+						} else if (resp.status().code() == 403) {
+							return Mono.error(new UnauthorizedException(
+									"Status: " + resp.status() + " with body: " + textDispatcherResult
+											.getTextResult()));
+						} else if (resp.status().code() == 404) {
+							return Mono.error(new NotFoundException(
+									"Status: " + resp.status() + " with body: " + textDispatcherResult
+											.getTextResult()));
+						} else if (resp.status().code() == 409) {
+							return Mono.error(new ConflictException(
+									"Status: " + resp.status() + " with body: " + textDispatcherResult
+											.getTextResult()));
+						} else {
+							return Mono.error(new RemoteDispatchException(
+									"Incorrect response code: " + resp.status() + " with body: " + textDispatcherResult
+											.getTextResult()));
+						}
 					});
 		} catch (CommandSerializationException e) {
 			return Mono.error(e);
+		} catch (Throwable t) {
+			return Mono.error(t);
 		}
 	}
-
-
 
 	private <C extends Command<R>, R extends Result> TextDispatcherResult toEmptyResultWithHeaders(C command,
 			HttpClientResponse resp) {

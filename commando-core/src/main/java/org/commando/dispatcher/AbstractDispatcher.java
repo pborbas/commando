@@ -87,7 +87,7 @@ public abstract class AbstractDispatcher implements Dispatcher {
 	}
 
 	protected void logException(Exception e, Command dispatchCommand) {
-		LOGGER.error("Error while executing command: " + dispatchCommand.getClass() + ": " + e, e);
+		LOGGER.error("Error while executing command: " + dispatchCommand + ": " + e, e);
 	}
 
 	protected long getResultTimeout(final Command command) {
